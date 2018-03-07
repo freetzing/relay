@@ -1,18 +1,25 @@
 # fritzing-js
 
+### Table of content
+
+- Motivation
+- Implementation
+- API Draft
+- License
+
 ### Motivation
 ...
 
 ### Implementation
-at the fritzing-js repo you can find a fritzing react app and a module library.
+At the fritzing-js repo you can find a fritzing react app and a module library.
 fritzing-js provides the most used function as packages and can be loaded by other projects.
 
 The main Packages:
 - IO
-  - FZZ
-  - FZ
-  - FZP
-  - SVG
+  - [FZZ](https://fritzing.github.io/fzz-js/)
+  - [FZ](https://github.com/fritzing/fzz-js)
+  - [FZP](https://fritzing.github.io/fzp-js/)
+  - [SVG](https://github.com/fritzing/fritzing-parts-api-client-js)
 - Renderer
   - Breadboard
   - Pcb
@@ -22,8 +29,7 @@ The main Packages:
 
 
 ### API Draft
-
-below you can find a first drat of the Fritzing API. How you can program a new fritzing blink.
+below you can find a first drat of the Fritzing API. How you can program a new fritzing blink. (just an api draft of an upcoming implementation)
 ```js
 // create a new fritzing project
 proj = new Fritzing()
@@ -41,7 +47,7 @@ proj.code('firmware.ino')
 
 // run the project by emulating the code.
 proj.run()
-
 ```
+
 ### License
 [MIT License](LICENSE)
