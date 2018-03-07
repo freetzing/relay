@@ -1,0 +1,22 @@
+{
+  "name": "fritzing-js",
+  "version": "0.0.1",
+  "description": "fritzing js",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fritzing/fritzing-js.git"
+  },
+  "keywords": [
+    "fritzing"
+  ],
+  "author": "Fritzing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fritzing/fritzing-js/issues"
+  },
+  "homepage": "https://github.com/fritzing/fritzing-js#readme"
+}
