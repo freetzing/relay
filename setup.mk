@@ -45,7 +45,7 @@ open-coverage: test
 .PHONY: test open-coverage
 
 build:
-	$(L)$(BIN)$(PATHSEP)babel -o lib$(PATHSEP)index.js src$(PATHSEP)index.js
+	$(L)$(BIN)$(PATHSEP)babel -d lib src/.
 .PHONY: build
 
 docs:
