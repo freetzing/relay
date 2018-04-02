@@ -11,6 +11,9 @@
 ...
 
 ### Implementation
+
+**The current status of this project is in early stage and not stable**
+
 At the fritzing-js repo you can find a fritzing react app and a module library.
 fritzing-js provides the most used function as packages and can be loaded by other projects.
 
