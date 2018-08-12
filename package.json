@@ -1,7 +1,7 @@
 {
   "name": "fritzing-js",
   "version": "0.0.1",
-  "description": "The Fritzing Javascript library.",
+  "description": "The Fritzing Javascript library",
   "main": "index.js",
   "repository": "https://github.com/fritzin/fritzing-js",
   "license": "GPL-3.0",
