@@ -6,10 +6,10 @@
 
 # Table of Contents
 
-### 1. [Motivation](#Motivation)
+### 1. [Motivation](#motivation)
 ### 2. [API](#API)
-### 3. [The Future](#The%20Future)
-### 5. [License](License)
+### 3. [The Future](#the-future)
+### 5. [License](#License)
 
 ## Motivation
 
@@ -31,12 +31,12 @@ To convert Fritzing files to JSON and vice versa, use the `to` and `from` functi
 
 |File Extension |API Reference                         |
 |---------------|--------------------------------------|
-|FZP            |[Part](#Fritzing%20Parts)             |
-|FZ             |[Sketch](#Fritzing%20Sketches)        |
-|FZB            |[Part Bin](#Fritzing%20Part%20Bins)   |
-|FZZ            |[Sketch Bundle](#Fritzing%20Bundles)  |
-|FZPZ           |[Part Bundle](#Fritzing%20Bundles)    |
-|FZBZ           |[Part Bin Bundle](#Fritzing%20Bundles)|
+|FZP            |[Part](#Fritzing-Parts)             |
+|FZ             |[Sketch](#Fritzing-Sketches)        |
+|FZB            |[Part Bin](#Fritzing-Part-Bins)   |
+|FZZ            |[Sketch Bundle](#Fritzing-Bundles)  |
+|FZPZ           |[Part Bundle](#Fritzing-Bundles)    |
+|FZBZ           |[Part Bin Bundle](#Fritzing-Bundles)|
 
 ### Fritzing Parts
 **File extension:** FZP
@@ -137,7 +137,7 @@ SketchBundle.fromFZZ(fzzContents)
 
 ### Classes
 
-The following classes compose the model of [all primary Fritzing objects](#Conversion%20Table).
+The following classes compose the model of [all primary Fritzing objects](#Conversion-Table).
 
 ```javascript
 module.exports = {
