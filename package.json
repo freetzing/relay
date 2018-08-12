@@ -1,35 +1,33 @@
 {
   "name": "fritzing-js",
   "version": "0.0.1",
-  "description": "fritzing js",
-  "author": "Fritzing",
-  "license": "MIT",
-  "keywords": [
-    "fritzing"
-  ],
-  "homepage": "https://github.com/fritzing/fritzing-js#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fritzing/fritzing-js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fritzing/fritzing-js/issues"
-  },
+  "description": "The Fritzing Javascript library.",
   "main": "index.js",
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  },
+  "repository": "https://github.com/fritzin/fritzing-js",
+  "license": "GPL-3.0",
+  "author": "Max Karpawich <max.karpawich@gmail.com>",
+  "contributors": [
+    {
+      "name": "Paul Vollmer",
+      "email": "paul.vollmer@protonmail.com",
+      "url": "https://github.com/paulvollmer"
+    },
+    {
+      "name": "Max Karpawich",
+      "email": "max.karpawich@gmail.com",
+      "url": "https://github.com/karpawich"
+    }
+  ],
   "dependencies": {
-    "fritzing-parts-api-client-js": "github:fritzing/fritzing-parts-api-client-js",
-    "fzp-js": "fritzing/fzp-js#develop",
-    "fzz-js": "fritzing/fzz-js#develop",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.1",
-    "snapsvg-cjs": "0.0.6"
+    "adm-zip": "^0.4.11",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
   }
 }
