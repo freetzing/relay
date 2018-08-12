@@ -7,13 +7,13 @@
 # Table of Contents
 
 ### 1. [Motivation](#motivation)
-### 2. [API](#API)
+### 2. [API](#api)
 ### 3. [The Future](#the-future)
-### 5. [License](#License)
+### 5. [License](#license)
 
 ## Motivation
 
-The ultimate goal of this project is to create a full-scale version of Fritzing in a Javascript environment. In doing so, the hope is to construct a version of Fritzing which can be exposed to a wider array of the open source community.
+**The ultimate goal of this project is to create a full-scale version of Fritzing in a Javascript environment.** In doing so, the hope is to construct a version of Fritzing which can be exposed to a wider array of the open source community.
 
 This project is a merge of several libraries:
 - https://github.com/fritzing/fzp-js
@@ -31,12 +31,12 @@ To convert Fritzing files to JSON and vice versa, use the `to` and `from` functi
 
 |File Extension |API Reference                         |
 |---------------|--------------------------------------|
-|FZP            |[Part](#Fritzing-Parts)             |
-|FZ             |[Sketch](#Fritzing-Sketches)        |
-|FZB            |[Part Bin](#Fritzing-Part-Bins)   |
-|FZZ            |[Sketch Bundle](#Fritzing-Bundles)  |
-|FZPZ           |[Part Bundle](#Fritzing-Bundles)    |
-|FZBZ           |[Part Bin Bundle](#Fritzing-Bundles)|
+|FZP            |[Part](#fritzing-parts)             |
+|FZ             |[Sketch](#fritzing-sketches)        |
+|FZB            |[Part Bin](#fritzing-part-bins)   |
+|FZZ            |[Sketch Bundle](#fritzing-bundles)  |
+|FZPZ           |[Part Bundle](#fritzing-bundles)    |
+|FZBZ           |[Part Bin Bundle](#fritzing-bundles)|
 
 ### Fritzing Parts
 **File extension:** FZP
@@ -137,7 +137,7 @@ SketchBundle.fromFZZ(fzzContents)
 
 ### Classes
 
-The following classes compose the model of [all primary Fritzing objects](#Conversion-Table).
+The following classes compose the model of [all primary Fritzing objects](#conversion-table).
 
 ```javascript
 module.exports = {
