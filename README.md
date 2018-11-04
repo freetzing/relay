@@ -1,5 +1,4 @@
-![FritzingJS](./logo.png?raw=true "FritzingJS")
-
+# Freetzing
 ![](https://img.shields.io/badge/CODE%20STYLE-STANDARD-d73526.svg?longCache=true&style=flat-square)
 ![](https://img.shields.io/badge/VERSION-0.0.1-c6af16.svg?longCache=true&style=flat-square)
 ![](https://img.shields.io/badge/DOCUMENTED-SOON-darkorange.svg?longCache=true&style=flat-square)
@@ -13,7 +12,7 @@
 
 ## Motivation
 
-**The ultimate goal of this project is to create a full-scale version of Fritzing in a Javascript environment.** In doing so, the hope is to construct a version of Fritzing which can be exposed to a wider array of the open source community.
+**The ultimate goal of this project is to create a highly modularized version of Fritzing in a Javascript environment.** In doing so, the hope is to construct a version of Fritzing which can be exposed to and updated by a wider array of the open source community.
 
 This project is a merge of several libraries:
 - https://github.com/fritzing/fzp-js
@@ -177,14 +176,15 @@ module.exports = {
 }
 ```
 
-Documention will come soon, but in the meantime you can inspect the source code of this library or read more about Fritzing file formats in the [Fritzing Wiki](https://github.com/fritzing/fritzing-app/wiki).
+Documention will come eventually, but in the meantime you can inspect the source code of this library or read more about Fritzing file formats in the [Fritzing Wiki](https://github.com/fritzing/fritzing-app/wiki).
 
 ## The Future
-
-- **Helper functions**
-- Publish to NPM
+- **Modularize Fritzing data models**
+- Conversion from old data (Sketches, Parts)
+- Helper functions (get, set, indexOf, remove, etc.)
 - Documentation
 - Testing
+- Publish libraries to NPM
 - Rendering
   - Parts
   - Sketches
@@ -194,7 +194,7 @@ Documention will come soon, but in the meantime you can inspect the source code 
 
 ## License
 
-`fritzing-js` is originally based upon the [Fritzing](https://github.com/fritzing/fritzing-app) CAD application.
+`freetzing` is originally based upon the [Fritzing](https://github.com/fritzing/fritzing-app) CAD application.
 
 ### **Thus, the project is also licensed under [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html).**
  You can find a copy of the license in the LICENSE file of this repository.
