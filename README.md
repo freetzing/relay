@@ -4,23 +4,13 @@
 ![](https://img.shields.io/badge/VERSION-0.0.1-c6af16.svg?longCache=true&style=flat-square)
 ![](https://img.shields.io/badge/DOCUMENTED-SOON-darkorange.svg?longCache=true&style=flat-square)
 
-# Table of Contents
-
-### 1. [Motivation](#motivation)
-### 2. [API](#api)
-### 3. [The Future](#the-future)
-### 5. [License](#license)
-
-## Motivation
-
-**The ultimate goal of this project is to create a full-scale version of Fritzing in a Javascript environment.** In doing so, the hope is to construct a version of Fritzing which can be exposed to a wider array of the open source community.
 
 This project is a merge of several libraries:
 - https://github.com/fritzing/fzp-js
 - https://github.com/fritzing/fzz-js
 - https://github.com/karpawich/fzp2js
 
-As of right  now, the idea is to unify the functionality of those libraries into a single API with complete documentation of each Fritzing file format. While present documentation covers the main components of Fritzing files, there were specific components found in various files and the Fritzing source code which have yet to be publicly documented. This library aims to document those components so that they are supported in a Javascript environment.
+`fritzing-js` unifies the functionality of those libraries into a single API with complete documentation of each Fritzing file format.While present documentation covers the main components of Fritzing files, there were specific components found in various files and the Fritzing source code which have yet to be publicly documented. This library aims to document those components so that they are supported in a Javascript environment.
 
 
 ## API
@@ -182,15 +172,9 @@ Documention will come soon, but in the meantime you can inspect the source code 
 ## The Future
 
 - **Helper functions**
-- Publish to NPM
 - Documentation
 - Testing
-- Rendering
-  - Parts
-  - Sketches
-- Full-scale application
-  - Editing
-  - Autorouting
+- Publish to NPM
 
 ## License
 
