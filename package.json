@@ -1,6 +1,6 @@
 {
   "name": "fritzing-js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "The Fritzing Javascript library",
   "main": "index.js",
   "repository": "https://github.com/fritzin/fritzing-js",
