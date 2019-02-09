@@ -32,4 +32,4 @@ Interested in joining our effort to build a bridge between Fritzing and Javascri
 `fritzing-js` is originally based upon the [Fritzing](https://github.com/fritzing/fritzing-app) CAD application.
 
 ### **Thus, the project is also licensed under [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html).**
- You can find a copy of the license in the LICENSE file of this repository.
+ You can find a copy of the license in the LICENSE file of this repository. 
