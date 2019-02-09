@@ -13,6 +13,8 @@
 
 As of this writing, the library has transitioned from `stable` to `development` as we work on modularizing, documenting, and expanding it for official release on `npm`. You can still find the old version in [Release v0.2.0](https://github.com/freetzing/fritzing-js/releases/tag/v0.2.0), complete with basic examples and supportive of *all* Fritzing data types.
 
+You can follow our progress through each of the following milestones over at [this Project](https://github.com/orgs/freetzing/projects/2).
+
 #### Milestones
 - ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/master/lib/part.js))
 - **sketch module**
@@ -20,8 +22,6 @@ As of this writing, the library has transitioned from `stable` to `development` 
 - bundle module
 - testing
 - release
-
-You can follow our progress through each of these milestones over at [this Project](https://github.com/orgs/freetzing/projects/2).
 
 ## Contributing
 
