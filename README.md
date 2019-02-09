@@ -25,7 +25,7 @@ You can follow our progress through each of the following milestones over at [th
 
 ## Contributing
 
-Interested in joining our effort to build a bridge between Fritzing and Javascript? Start by [Submitting a Pull Request](https://github.com/freetzing/fritzing-js/compare) with the changes that you want to make to improve this library. We are still in the early stages of the `freetzing` project, so we also encourage you to [Open an Issue](https://github.com/freetzing/fritzing-js/issues/new) if you have any experience that you think would help us out.
+Interested in joining our effort to build a bridge between Fritzing and Javascript? Start by [Submitting a Pull Request](https://github.com/freetzing/fritzing-js/compare) with the changes that you want to make to improve this library.
 
 ## License
 
