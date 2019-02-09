@@ -16,10 +16,12 @@ As of this writing, the library has transitioned from `stable` to `development` 
 #### Milestones
 - ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/master/lib/part.js))
 - **sketch module**
-- bundle module
 - bin module
+- bundle module
 - testing
 - release
+
+You can follow our progress through each of these milestones over at [this Project](https://github.com/orgs/freetzing/projects/2).
 
 ## Contributing
 
