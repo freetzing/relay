@@ -14,7 +14,7 @@
 As of this writing, the library has transitioned from `stable` to `development` as we work on modularizing, documenting, and expanding it for official release on `npm`. You can still find the old version in the commit history, complete with basic examples and supportive of *all* Fritzing data types.
 
 #### Milestones
-- ~~parts module~~
+- ~~parts module~~ (completed 2.9.2019)
 - **sketch module**
 - bundle module
 - bin module
