@@ -23,8 +23,7 @@ As of this writing, the library has transitioned from `stable` to `development` 
 
 ## Contributing
 
-Interested in joining our effort to build a bridge between Fritzing and Javascript? [Open an Issue](https://github.com/freetzing/fritzing-js/issues/new) explaining your interest and any experience you think might help, or [Submit a Pull Request](https://github.com/freetzing/fritzing-js/compare) with your suggested changes.
-
+Interested in joining our effort to build a bridge between Fritzing and Javascript? Start by [Submitting a Pull Request](https://github.com/freetzing/fritzing-js/compare) with the changes that you want to make to improve this library. We are still in the early stages of the `freetzing` project, so we also encourage you to [Open an Issue](https://github.com/freetzing/fritzing-js/issues/new) if you have any experience that you think would help us out.
 
 ## License
 
