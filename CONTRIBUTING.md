@@ -1,1 +1,0 @@
-Interested in joining our effort to build a bridge between Fritzing and Javascript? Start by [Submitting a Pull Request](https://github.com/freetzing/fritzing-js/compare) with the changes that you want to make to improve this library.
