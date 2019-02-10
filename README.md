@@ -1,4 +1,4 @@
-![FritzingJS](./logo.png?raw=true "FritzingJS")
+![FritzingJS](./assets/logo.png?raw=true "FritzingJS")
 
 ![](https://img.shields.io/badge/CODE%20STYLE-STANDARD-d73526.svg?longCache=true&style=flat-square)
 ![](https://img.shields.io/badge/VERSION-0.4.0-c6af16.svg?longCache=true&style=flat-square)
