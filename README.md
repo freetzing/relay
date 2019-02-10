@@ -13,17 +13,7 @@
 
 As of this writing, the library has transitioned from `stable` to `development` as we work on modularizing, documenting, and expanding it for official release on `npm`. You can still find the old version in [Release v0.2.0](https://github.com/freetzing/fritzing-js/releases/tag/v0.2.0), complete with basic examples and supportive of *all* Fritzing data types.
 
-#### Milestones
-- ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/master/lib/part.js))
-- ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/master/lib/sketch.js))
-- **bin module**
-- bundle module
-- testing
-- release
-
-## Contributing
-
-Interested in joining our effort to build a bridge between Fritzing and Javascript? Start by [Submitting a Pull Request](https://github.com/freetzing/fritzing-js/compare) with the changes that you want to make to improve this library.
+Nightly changes can be found over at the [v1.0.0](https://github.com/freetzing/fritzing-js/tree/v1.0.0) as we prepare for release.
 
 ## License
 
