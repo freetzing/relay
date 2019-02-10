@@ -14,8 +14,8 @@
 This branch is home to any nightly changes that we push as we prepare for release.
 
 #### Milestones
-- ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/part.js))
-- ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/sketch.js))
+- ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/part.js)
+- ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/sketch.js)
 - **bin module**
 - bundle module
 - testing
