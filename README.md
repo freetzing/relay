@@ -17,8 +17,8 @@ You can follow our progress through each of the following milestones over at [th
 
 #### Milestones
 - ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/master/lib/part.js))
-- **sketch module**
-- bin module
+- ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/master/lib/sketch.js))
+- **bin module**
 - bundle module
 - testing
 - release
