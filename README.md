@@ -1,7 +1,7 @@
 ![FritzingJS](./assets/logo.png?raw=true "FritzingJS")
 
 ![](https://img.shields.io/badge/CODE%20STYLE-STANDARD-d73526.svg?longCache=true&style=flat-square)
-![](https://img.shields.io/badge/VERSION-0.5.0-c6af16.svg?longCache=true&style=flat-square)
+![](https://img.shields.io/badge/VERSION-0.6.0-c6af16.svg?longCache=true&style=flat-square)
 
 **The Javascript library for Fritzing data.**
 
@@ -17,7 +17,7 @@ This branch is home to any nightly changes that we push as we prepare for releas
 - ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/part.js))
 - ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/sketch.js))
 - ~~bin module~~ ✅ ([completed 2.11.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/bin.js))
-- bundle module
+- ~~bundle module~~ ✅ ([completed 2.12.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/bundle.js))
 - testing
 - release
 
