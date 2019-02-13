@@ -19,7 +19,8 @@
     }
   ],
   "scripts": {
-    "docs": "node_modules/.bin/jsdoc -c .jsdoc.json"
+    "docs": "node_modules/.bin/jsdoc -c .jsdoc.json",
+    "test": "jest"
   },
   "dependencies": {
     "adm-zip": "^0.4.11",
