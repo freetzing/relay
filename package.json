@@ -19,6 +19,7 @@
     }
   ],
   "dependencies": {
+    "@types/xml2js": "^0.4.3",
     "adm-zip": "^0.4.11",
     "xml2js": "^0.4.19"
   },
