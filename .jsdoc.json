@@ -1,0 +1,13 @@
+{
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "source": {
+    "include": ["./lib"]
+  },
+  "opts": {
+    "template": "node_modules/docdash",
+    "destination": "./docs",
+    "readme": "README.md"
+  }
+}
