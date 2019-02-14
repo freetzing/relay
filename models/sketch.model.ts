@@ -1,4 +1,4 @@
-import { Property, Point } from "./global.model";
+import { Point, Property } from "./global.model";
 
 /**
  * @classdesc A Bezier curve used to represent a bend in the leg of a Part {@link Instance}
@@ -6,8 +6,8 @@ import { Property, Point } from "./global.model";
  * @param {Point} cp1 The second control point of the Bezier curve
  */
 export class Bezier {
-  cp0: Point;
-  cp1: Point;
+  public cp0: Point;
+  public cp1: Point;
 
   constructor(params: Bezier) {
     this.cp0 = params.cp0;
@@ -16,13 +16,13 @@ export class Bezier {
 }
 
 /**
- * @classdesc A {@link Bezier} and a {@link Point} object paired together to represent the state of a Part {@link Instance} leg
+ * @classdesc A {@link Bezier} and a {@link Point} object paired together to represent the state of a Part {@link Instance} leg.
  * @param {Point} point The {@link Point} data
  * @param {Bezier} bezier The {@link Bezier} data
  */
 export class PointBezierPair {
-  point: Point;
-  bezier: Bezier;
+  public point: Point;
+  public bezier: Bezier;
 
   constructor(params: PointBezierPair) {
     this.point = params.point;
@@ -34,10 +34,11 @@ export class PointBezierPair {
  * @classdesc A three-dimensional {@link Point} in virtual space
  * @param {number} x The x-coordinate of this Geometry
  * @param {number} y The y-coordinate of this Geometry
- * @param {number} z The z-coordinate of this Geometry, denoting whether an object in virtual space is above or below another. Objects with a higher z value are rendered above
+ * @param {number} z The z-coordinate of this Geometry, denoting whether an object in virtual space is above or below another. 
+ * Objects with a higher z value are rendered above
  */
 export class Geometry extends Point {
-  z: number;
+  public z: number;
 
   constructor(params: Geometry) {
     super(params);
@@ -60,15 +61,15 @@ export class Geometry extends Point {
  * @param {number} params.m33 The division factor
  */
 export class Transform {
-  m11: number;
-  m12: number;
-  m13: number;
-  m21: number;
-  m22: number;
-  m23: number;
-  m31: number;
-  m32: number;
-  m33: number;
+  public m11: number;
+  public m12: number;
+  public m13: number;
+  public m21: number;
+  public m22: number;
+  public m23: number;
+  public m31: number;
+  public m32: number;
+  public m33: number;
 
   constructor(params: Transform) {
     this.m11 = params.m11 || 1;
@@ -88,11 +89,12 @@ export class Transform {
  * @classdesc An object's position and transformation in three-dimensional space
  * @param {number} x The x-coordinate of the TransformGeometry
  * @param {number} y The y-coordinate of the TransformGeometry
- * @param {number} z The z-coordinate of the TransformGeometry. See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
+ * @param {number} z The z-coordinate of the TransformGeometry.
+ * See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space.
  * @param {Transform} transform The {@link Transform} matrix describing the object's transformation from its original state
  */
 export class TransformGeometry extends Geometry {
-  transform: Transform;
+  public transform: Transform;
 
   constructor(params: TransformGeometry) {
     super(params);
@@ -106,7 +108,8 @@ export class TransformGeometry extends Geometry {
  * @param {object} [params = {}] The constructor parameters for this WireGeometry
  * @param {number} params.x The x-coordinate of the WireGeometry
  * @param {number} params.y The y-coordinate of the WireGeometry
- * @param {number} params.z The z-coordinate of the WireGeometry. See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
+ * @param {number} params.z The z-coordinate of the WireGeometry. 
+ * See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
  * @param {number} [params.x1 = 0] The x-coordinate of one end of the wire, offset from the given x-coordinate of this WireGeometry
  * @param {number} [params.y1 = 0] The y-coordinate of one end of the wire, offset from the given y-coordinate of this WireGeometry
  * @param {number} params.x2 The x-coordinate of the other end of the wire, offset from the given x-coordinate of this WireGeometry
@@ -124,11 +127,11 @@ export class TransformGeometry extends Geometry {
  * https://github.com/fritzing/fritzing-app/blob/master/src/viewgeometry.h
  */
 export class WireGeometry extends Geometry {
-  x1: number;
-  x2: number;
-  y1: number;
-  y2: number;
-  wireFlags: number;
+  public x1: number;
+  public x2: number;
+  public y1: number;
+  public y2: number;
+  public wireFlags: number;
 
   constructor(params: WireGeometry) {
     super(params);
@@ -146,21 +149,23 @@ export class WireGeometry extends Geometry {
  * @param {object} [params = {}] The constructor parameters for this TitleGeometry
  * @param {number} params.x The x-coordinate of the TitleGeometry
  * @param {number} params.y The y-coordinate of the TitleGeometry
- * @param {number} params.z The z-coordinate of the TitleGeometry. See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
+ * @param {number} params.z The z-coordinate of the TitleGeometry. 
+ * See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
  * @param {boolean} [params.visible = false] Whether the title is visible
  * @param {number} [params.offsetX = 0] The offset of the title's x-coordinate from the given x-coordinate of this TitleGeometry
  * @param {number} [params.offsetY = 0] The offset of the title's y-coordinate from the given y-coordinate of this TitleGeometry
  * @param {string} params.textColor The color of the title's text as a 6 digit hexidecimal value denoted by the pound (#) sign
  * @param {string} params.fontSize The font size of the title
- * @param {string[]} [params.visibleProperties = []] The keys of the {@link PartProperty}'s' to be forcibly displayed with the title. If this array is left empty, those {@link PartProperty}'s with **showInLabel=true** will be displayed by default
+ * @param {string[]} [params.visibleProperties = []] The keys of the {@link PartProperty}'s' to be forcibly displayed with the title.
+ * If this array is left empty, those {@link PartProperty}'s with **showInLabel=true** will be displayed by default
  */
 export class TitleGeometry extends Geometry {
-  visible: boolean;
-  offsetX: number;
-  offsetY: number;
-  textColor: string;
-  fontSize: string;
-  visibleProperties: Array<string>;
+  public visible: boolean;
+  public offsetX: number;
+  public offsetY: number;
+  public textColor: string;
+  public fontSize: string;
+  public visibleProperties: string[];
 
   constructor(params: TitleGeometry) {
     super(params);
@@ -177,7 +182,7 @@ export class TitleGeometry extends Geometry {
    * @param {number} index The index of the visible property
    * @return {string} The visible property at the given index
    */
-  getVisiblePropertyAt(index: number): string {
+  public getVisiblePropertyAt(index: number): string {
     return this.visibleProperties[index];
   }
 
@@ -185,9 +190,10 @@ export class TitleGeometry extends Geometry {
    * Adds a visible property to this TitleGeometry on the condition that it does not already exist
    * @param {string} visibleProperty The visible property to be added
    */
-  setVisiblePropertyvisibleProperty(visibleProperty: string) {
-    if (!this.hasVisibleProperty(visibleProperty))
+  public setVisiblePropertyvisibleProperty(visibleProperty: string) {
+    if (!this.hasVisibleProperty(visibleProperty)) {
       this.visibleProperties.push(visibleProperty);
+    }
   }
 
   /**
@@ -195,15 +201,13 @@ export class TitleGeometry extends Geometry {
    * @param {string} visibleProperty The given visible property to search for
    * @return {boolean} Whether this TitleGeometry has the given visible property
    */
-  hasVisibleProperty(visibleProperty: string): boolean {
-    let has = false;
-    for (let i = 0; i < this.visibleProperties.length; i++) {
-      if (this.visibleProperties[i] === visibleProperty) {
-        has = true;
-        break;
+  public hasVisibleProperty(visibleProperty: string): boolean {
+    for (const property of this.visibleProperties) {
+      if (property === visibleProperty) {
+        return true;
       }
     }
-    return has;
+    return false;
   }
 
   /**
@@ -211,7 +215,7 @@ export class TitleGeometry extends Geometry {
    * @param {string} visibleProperty The visible property to be removed
    * @return {boolean} Whether the given visible property was removed
    */
-  removeVisibleProperty(visibleProperty: string): boolean {
+  public removeVisibleProperty(visibleProperty: string): boolean {
     let removed = false;
     for (let i = 0; i < this.visibleProperties.length; i++) {
       if (this.visibleProperties[i] === visibleProperty) {
@@ -228,7 +232,7 @@ export class TitleGeometry extends Geometry {
    * @param {number} index The index of the visible property
    * @return {boolean} Whether the visible property at the given index was removed
    */
-  removeVisiblePropertyAt(index: number): boolean {
+  public removeVisiblePropertyAt(index: number): boolean {
     return this.visibleProperties.splice(index, 1).length > 0;
   }
 }
@@ -240,9 +244,9 @@ export class TitleGeometry extends Geometry {
  * @param {string} layer The layer of the connection
  */
 export class InstanceConnectorReference {
-  id: string;
-  modelIndex: number;
-  layer: string;
+  public id: string;
+  public modelIndex: number;
+  public layer: string;
 
   constructor(params: InstanceConnectorReference) {
     this.id = params.id;
@@ -257,15 +261,16 @@ export class InstanceConnectorReference {
  * @param {string} params.id The ID of this InstanceConnector
  * @param {string} params.layer The layer of this InstanceConnector
  * @param {Geometry} params.geometry The {@link Geometry} of this InstanceConnector
- * @param {PointBezierPair[]} [params.leg = []] The bendable or straight leg of an InstanceConnector such as an LED, represented by {@link PointBezierPair}s
+ * @param {PointBezierPair[]} [params.leg = []] The bendable or straight leg of an InstanceConnector such as an LED, 
+ * represented by {@link PointBezierPair}s.
  * @param {InstanceConnectorReference[]} [params.connectsTo = []] The {@link InstanceConnectorReference}s that this Instance connects to
  */
 export class InstanceConnector {
-  id: string;
-  layer: string;
-  geometry: Geometry;
-  leg: Array<PointBezierPair>;
-  connectsTo: Array<InstanceConnectorReference>;
+  public id: string;
+  public layer: string;
+  public geometry: Geometry;
+  public leg: PointBezierPair[];
+  public connectsTo: InstanceConnectorReference[];
 
   constructor(params: InstanceConnector) {
     this.id = params.id;
@@ -280,7 +285,7 @@ export class InstanceConnector {
    * @param {number} index The index of the leg data point
    * @return {PointBezierPair} The leg data point at the given index
    */
-  getLegDataPointAt(index: number): PointBezierPair {
+  public getLegDataPointAt(index: number): PointBezierPair {
     return this.leg[index];
   }
 
@@ -288,8 +293,10 @@ export class InstanceConnector {
    * Adds a leg data point to this InstanceConnector on the condition that it does not already exist
    * @param {PointBezierPair} legDataPoint The leg data point to be added
    */
-  setLegDataPoint(legDataPoint: PointBezierPair) {
-    if (!this.hasLegDataPoint(legDataPoint)) this.leg.push(legDataPoint);
+  public setLegDataPoint(legDataPoint: PointBezierPair) {
+    if (!this.hasLegDataPoint(legDataPoint)) {
+      this.leg.push(legDataPoint);
+    }
   }
 
   /**
@@ -297,15 +304,13 @@ export class InstanceConnector {
    * @param {PointBezierPair} legDataPoint The given leg data point to search for
    * @return {boolean} Whether this InstanceConnector has the given leg data point
    */
-  hasLegDataPoint(legDataPoint: PointBezierPair): boolean {
-    let has = false;
-    for (let i = 0; i < this.leg.length; i++) {
-      if (this.leg[i] === legDataPoint) {
-        has = true;
-        break;
+  public hasLegDataPoint(legDataPoint: PointBezierPair): boolean {
+    for (const legData of this.leg) {
+      if (legData === legDataPoint) {
+        return true;
       }
     }
-    return has;
+    return false;
   }
 
   /**
@@ -313,16 +318,14 @@ export class InstanceConnector {
    * @param {PointBezierPair} legDataPoint The leg data point to be removed
    * @return {boolean} Whether the given leg data point was removed
    */
-  removeLegDataPoint(legDataPoint: PointBezierPair): boolean {
-    var removed = false;
-    for (var i = 0; i < this.leg.length; i++) {
-      if (this.leg[i] === legDataPoint) {
-        this.leg.splice(i, 1);
-        removed = true;
-        break;
+  public removeLegDataPoint(legDataPoint: PointBezierPair): boolean {
+    for (const legData of this.leg) {
+      if (legData === legDataPoint) {
+        this.leg.splice(this.leg.indexOf(legData), 1);
+        return true;
       }
     }
-    return removed;
+    return false;
   }
 
   /**
@@ -330,7 +333,7 @@ export class InstanceConnector {
    * @param {number} index The index of the leg data point
    * @return {boolean} Whether the leg data point at the given index was removed
    */
-  removeLegDataPointAt(index: number): boolean {
+  public removeLegDataPointAt(index: number): boolean {
     return this.leg.splice(index, 1).length > 0;
   }
 
@@ -339,7 +342,7 @@ export class InstanceConnector {
    * @param {string} id The ID of the {@link InstanceConnectorReference}
    * @return {InstanceConnectorReference} The {@link InstanceConnectorReference} with the given ID
    */
-  getConnectorReference(id: string): InstanceConnectorReference {
+  public getConnectorReference(id: string): InstanceConnectorReference {
     let ret: InstanceConnectorReference;
     for (var i = 0; i < this.connectsTo.length; i++) {
       if (this.connectsTo[i].id === id) {
@@ -426,6 +429,13 @@ export class InstanceConnector {
  */
 export class InstanceViewSettings {
   name: string;
+  layer: string;
+  geometry: Geometry;
+  titleGeometry: TitleGeometry;
+  connectors: Array<InstanceConnector>;
+  bottom: boolean;
+  locked: boolean;
+  layerHidden: boolean;
   
   constructor(params: InstanceViewSettings) {
     this.name = params.name;

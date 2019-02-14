@@ -1,14 +1,12 @@
 {
-    "compilerOptions": {
-      "plugins": [
-        {
-          "name": "typescript-tslint-plugin",
-          "alwaysShowRuleFailuresAsWarnings": false,
-          "ignoreDefinitionFiles": true,
-          "configFile": "../tslint.json",
-          "suppressWhileTypeErrorsPresent": false,
-          "mockTypeScriptVersion": false
-        }
-      ]
-    }
-  }
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "max-line-length": [true, 150],
+        "max-classes-per-file": [false, 100]
+    },
+    "rulesDirectory": []
+}
