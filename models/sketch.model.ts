@@ -321,7 +321,7 @@ export class InstanceConnector {
   public removeLegDataPoint(legDataPoint: PointBezierPair): boolean {
     for (const legData of this.leg) {
       if (legData === legDataPoint) {
-        this.leg.splice(this.leg.indexOf(legData), 1);
+        this.leg.splice(this.leg.findIndex(x => x === legDataPoint), 1);
         return true;
       }
     }
@@ -343,14 +343,13 @@ export class InstanceConnector {
    * @return {InstanceConnectorReference} The {@link InstanceConnectorReference} with the given ID
    */
   public getConnectorReference(id: string): InstanceConnectorReference {
-    let ret: InstanceConnectorReference;
-    for (var i = 0; i < this.connectsTo.length; i++) {
-      if (this.connectsTo[i].id === id) {
-        ret = this.connectsTo[i];
-        break;
+    for (const connector of this.connectsTo) {
+      if (connector.id === id) {
+        return connector;
       }
     }
-    return ret;
+    // TODO: Check data to be returned when not found id on connectsTo Array.
+    return null;
   }
 
   /**
@@ -358,15 +357,16 @@ export class InstanceConnector {
    * @param {number} index The index of the {@link InstanceConnectorReference}
    * @return {InstanceConnectorReference} The {@link InstanceConnectorReference} at the given index
    */
-  getConnectorReferenceAt(index: number): InstanceConnectorReference {
+  public getConnectorReferenceAt(index: number): InstanceConnectorReference {
     return this.connectsTo[index];
   }
 
   /**
-   * Adds a {@link InstanceConnectorReference} to this InstanceConnector on the condition that another {@link InstanceConnectorReference} with the same ID does not already exist
+   * Adds a {@link InstanceConnectorReference} to this InstanceConnector on the condition that another {@link InstanceConnectorReference}
+   * with the same ID does not already exist.
    * @param {InstanceConnectorReference} connectorReference The {@link InstanceConnectorReference} to be added
    */
-  setConnectorReference(connectorReference: InstanceConnectorReference) {
+  public setConnectorReference(connectorReference: InstanceConnectorReference) {
     if (!this.hasConnectorReference(connectorReference.id)) {
       this.connectsTo.push(connectorReference);
     }
@@ -377,15 +377,13 @@ export class InstanceConnector {
    * @param {string} id The given ID to search for
    * @return {boolean} Whether this InstanceConnector has a {@link InstanceConnectorReference} with the given ID
    */
-  hasConnectorReference(id: string): boolean {
-    let has = false;
-    for (let i = 0; i < this.connectsTo.length; i++) {
-      if (this.connectsTo[i].id === id) {
-        has = true;
-        break;
+  public hasConnectorReference(id: string): boolean {
+    for (const connector of this.connectsTo) {
+      if (connector.id === id) {
+        return true;
       }
     }
-    return has;
+    return false;
   }
 
   /**
@@ -393,16 +391,14 @@ export class InstanceConnector {
    * @param {string} id The ID of the {@link InstanceConnectorReference}
    * @return {boolean} Whether a {@link InstanceConnectorReference} with the given ID was removed
    */
-  removeConnectorReference(id: string): boolean {
-    let removed = false;
-    for (let i = 0; i < this.connectsTo.length; i++) {
-      if (this.connectsTo[i].id === id) {
-        this.connectsTo.splice(i, 1);
-        removed = true;
-        break;
+  public removeConnectorReference(id: string): boolean {
+    for (const connector of this.connectsTo) {
+      if (connector.id === id) {
+        this.connectsTo.splice(this.connectsTo.findIndex(x => x.id === id), 1);
+        return true;
       }
     }
-    return removed;
+    return false;
   }
 
   /**
@@ -410,7 +406,7 @@ export class InstanceConnector {
    * @param {number} index The index of the {@link InstanceConnectorReference}
    * @return {boolean} Whether a {@link InstanceConnectorReference} at the given index was removed
    */
-  removeConnectorReferenceAt(index: number): boolean {
+  public removeConnectorReferenceAt(index: number): boolean {
     return this.connectsTo.splice(index, 1).length > 0;
   }
 }
@@ -418,25 +414,30 @@ export class InstanceConnector {
 /**
  * @classdesc The view settings for an {@link Instance} in Fritzing
  * @param {object} [params = {}] The constructor parameters for these InstanceViewSettings
- * @param {string} params.name The name of the view associated with these InstanceViewSettings. The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
+ * @param {string} params.name The name of the view associated with these InstanceViewSettings. 
+ * The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**.
  * @param {string} params.layer The layer that these InstanceViewSettings are on inside the given view
  * @param {Geometry} params.geometry The {@link Geometry} of the corresponding {@link Instance} in the given view and layer
  * @param {TitleGeometry} params.titleGeometry The {@link TitleGeometry} of the corresponding {@link Instance} in the given view and layer
- * @param {InstanceConnector[]} [params.connectors = []] The {@link InstanceConnector}s for the corresponding {@link Instance} in the given view and layer
- * @param {boolean} [params.locked = false] Seems to prevent the corresponding {@link Instance} from moving in the given view and layer. Confirmation of this variable's purpose would be much appreciated
- * @param {boolean} [params.bottom = false] Seems to denote whether the corresponding {@link Instance} sticks to the "bottom" in the PCB view. Confirmation of this variable's purpose would be much appreciated
- * @param {boolean} [params.layerHidden = false] Seem to hide the corresponding {@link Instance} for silkscreen layers in the PCB view. Confirmation of this variable's purpose would be much appreciated
+ * @param {InstanceConnector[]} [params.connectors = []] The {@link InstanceConnector}s for the corresponding {@link Instance}
+ * in the given view and layer.
+ * @param {boolean} [params.locked = false] Seems to prevent the corresponding {@link Instance} from moving in the given view and layer.
+ * Confirmation of this variable's purpose would be much appreciated.
+ * @param {boolean} [params.bottom = false] Seems to denote whether the corresponding {@link Instance} sticks to the "bottom" in the PCB view.
+ * Confirmation of this variable's purpose would be much appreciated.
+ * @param {boolean} [params.layerHidden = false] Seem to hide the corresponding {@link Instance} for silkscreen layers in the PCB view.
+ * Confirmation of this variable's purpose would be much appreciated.
  */
 export class InstanceViewSettings {
-  name: string;
-  layer: string;
-  geometry: Geometry;
-  titleGeometry: TitleGeometry;
-  connectors: Array<InstanceConnector>;
-  bottom: boolean;
-  locked: boolean;
-  layerHidden: boolean;
-  
+  public name: string;
+  public layer: string;
+  public geometry: Geometry;
+  public titleGeometry: TitleGeometry;
+  public connectors:InstanceConnector[];
+  public bottom: boolean;
+  public locked: boolean;
+  public layerHidden: boolean;
+
   constructor(params: InstanceViewSettings) {
     this.name = params.name;
     this.layer = params.layer;
@@ -447,83 +448,81 @@ export class InstanceViewSettings {
     this.locked = params.locked || false;
     this.layerHidden = params.layerHidden || false;
   }
+
+  /**
+   * Returns the {@link InstanceConnector} with the given ID
+   * @param {string} id The ID of the {@link InstanceConnector}
+   * @return {InstanceConnector} The {@link InstanceConnector} with the given ID
+   */
+  public getConnector(id: string): InstanceConnector {
+    for (const connector of this.connectors) {
+      if (connector.id === id) {
+        return connector;
+      }
+    }
+    // TODO: Check data to be returned when not found id on connectors Array.
+    return null;
+  }
+
+  /**
+   * Returns the {@link InstanceConnector} at the given index
+   * @param {number} index The index of the {@link InstanceConnector}
+   * @return {InstanceConnector} The {@link InstanceConnector} at the given index
+   */
+  public getConnectorAt(index: number): InstanceConnector {
+    return this.connectors[index];
+  }
+
+  /**
+   * Adds a {@link InstanceConnector} to these InstanceViewSettings on the condition that another {@link InstanceConnector}
+   * with the same ID does not already exist.
+   * @param {InstanceConnector} instanceConnector The {@link InstanceConnector} to be added
+   */
+  public setConnector(instanceConnector: InstanceConnector) {
+    if (!this.hasConnector(instanceConnector.id)) {
+      this.connectors.push(instanceConnector);
+    }
+  }
+
+  /**
+   * Returns whether these InstanceViewSettings have a {@link InstanceConnector} with the given ID
+   * @param {string} id The given ID to search for
+   * @return {boolean} Whether these InstanceViewSettings have a {@link InstanceConnector} with the given ID
+   */
+  public hasConnector(id: string): boolean {
+    for (const connector of this.connectors) {
+      if (connector.id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the {@link InstanceConnector} with the given ID
+   * @param {string} id The ID of the {@link InstanceConnector}
+   * @return {boolean} Whether a {@link InstanceConnector} with the given ID was removed
+   */
+  public removeConnector(id: string): boolean {
+    for (const connector of this.connectors) {
+      if (connector.id === id) {
+        this.connectors.splice(this.connectors.findIndex(x => x.id === id), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the {@link InstanceConnector} at the given index
+   * @param {number} index The index of the {@link InstanceConnector}
+   * @return {boolean} Whether a {@link InstanceConnector} at the given index was removed
+   */
+  public removeConnectorAt(index: number): boolean {
+    return this.connectors.splice(index, 1).length > 0;
+  }
+
 }
-
-/**
- * Returns the {@link InstanceConnector} with the given ID
- * @param {string} id The ID of the {@link InstanceConnector}
- * @return {InstanceConnector} The {@link InstanceConnector} with the given ID
- */
-InstanceViewSettings.prototype.getConnector = function(id) {
-  var ret;
-  for (var i = 0; i < this.connectors; i++) {
-    if (this.connectors[i].id === id) {
-      ret = this.connectors[i];
-      break;
-    }
-  }
-  return ret;
-};
-
-/**
- * Returns the {@link InstanceConnector} at the given index
- * @param {number} index The index of the {@link InstanceConnector}
- * @return {InstanceConnector} The {@link InstanceConnector} at the given index
- */
-InstanceViewSettings.prototype.getConnectorAt = function(index) {
-  return this.connectors[index];
-};
-
-/**
- * Adds a {@link InstanceConnector} to these InstanceViewSettings on the condition that another {@link InstanceConnector} with the same ID does not already exist
- * @param {InstanceConnector} instanceConnector The {@link InstanceConnector} to be added
- */
-InstanceViewSettings.prototype.setConnector = function(instanceConnector) {
-  if (!this.hasConnector(instanceConnector.id))
-    this.connectors.push(instanceConnector);
-};
-
-/**
- * Returns whether these InstanceViewSettings have a {@link InstanceConnector} with the given ID
- * @param {string} id The given ID to search for
- * @return {boolean} Whether these InstanceViewSettings have a {@link InstanceConnector} with the given ID
- */
-InstanceViewSettings.prototype.hasConnector = function(id) {
-  var has = false;
-  for (var i = 0; i < this.connectors.length; i++) {
-    if (this.connectors[i].id === id) {
-      has = true;
-      break;
-    }
-  }
-  return has;
-};
-
-/**
- * Removes the {@link InstanceConnector} with the given ID
- * @param {string} id The ID of the {@link InstanceConnector}
- * @return {boolean} Whether a {@link InstanceConnector} with the given ID was removed
- */
-InstanceViewSettings.prototype.removeConnector = function(id) {
-  var removed = false;
-  for (var i = 0; i < this.connectors.length; i++) {
-    if (this.connectors[i].id === id) {
-      this.connectors.splice(i, 1);
-      removed = true;
-      break;
-    }
-  }
-  return removed;
-};
-
-/**
- * Removes the {@link InstanceConnector} at the given index
- * @param {number} index The index of the {@link InstanceConnector}
- * @return {boolean} Whether a {@link InstanceConnector} at the given index was removed
- */
-InstanceViewSettings.prototype.removeConnectorAt = function(index) {
-  return this.connectors.splice(index, 1).length > 0;
-};
 
 /**
  * @constructor
