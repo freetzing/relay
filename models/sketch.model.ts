@@ -34,7 +34,7 @@ export class PointBezierPair {
  * @classdesc A three-dimensional {@link Point} in virtual space
  * @param {number} x The x-coordinate of this Geometry
  * @param {number} y The y-coordinate of this Geometry
- * @param {number} z The z-coordinate of this Geometry, denoting whether an object in virtual space is above or below another. 
+ * @param {number} z The z-coordinate of this Geometry, denoting whether an object in virtual space is above or below another.
  * Objects with a higher z value are rendered above
  */
 export class Geometry extends Point {
@@ -108,7 +108,7 @@ export class TransformGeometry extends Geometry {
  * @param {object} [params = {}] The constructor parameters for this WireGeometry
  * @param {number} params.x The x-coordinate of the WireGeometry
  * @param {number} params.y The y-coordinate of the WireGeometry
- * @param {number} params.z The z-coordinate of the WireGeometry. 
+ * @param {number} params.z The z-coordinate of the WireGeometry.
  * See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
  * @param {number} [params.x1 = 0] The x-coordinate of one end of the wire, offset from the given x-coordinate of this WireGeometry
  * @param {number} [params.y1 = 0] The y-coordinate of one end of the wire, offset from the given y-coordinate of this WireGeometry
@@ -149,7 +149,7 @@ export class WireGeometry extends Geometry {
  * @param {object} [params = {}] The constructor parameters for this TitleGeometry
  * @param {number} params.x The x-coordinate of the TitleGeometry
  * @param {number} params.y The y-coordinate of the TitleGeometry
- * @param {number} params.z The z-coordinate of the TitleGeometry. 
+ * @param {number} params.z The z-coordinate of the TitleGeometry.
  * See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space
  * @param {boolean} [params.visible = false] Whether the title is visible
  * @param {number} [params.offsetX = 0] The offset of the title's x-coordinate from the given x-coordinate of this TitleGeometry
@@ -261,7 +261,7 @@ export class InstanceConnectorReference {
  * @param {string} params.id The ID of this InstanceConnector
  * @param {string} params.layer The layer of this InstanceConnector
  * @param {Geometry} params.geometry The {@link Geometry} of this InstanceConnector
- * @param {PointBezierPair[]} [params.leg = []] The bendable or straight leg of an InstanceConnector such as an LED, 
+ * @param {PointBezierPair[]} [params.leg = []] The bendable or straight leg of an InstanceConnector such as an LED,
  * represented by {@link PointBezierPair}s.
  * @param {InstanceConnectorReference[]} [params.connectsTo = []] The {@link InstanceConnectorReference}s that this Instance connects to
  */
@@ -414,7 +414,7 @@ export class InstanceConnector {
 /**
  * @classdesc The view settings for an {@link Instance} in Fritzing
  * @param {object} [params = {}] The constructor parameters for these InstanceViewSettings
- * @param {string} params.name The name of the view associated with these InstanceViewSettings. 
+ * @param {string} params.name The name of the view associated with these InstanceViewSettings.
  * The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**.
  * @param {string} params.layer The layer that these InstanceViewSettings are on inside the given view
  * @param {Geometry} params.geometry The {@link Geometry} of the corresponding {@link Instance} in the given view and layer
@@ -433,7 +433,7 @@ export class InstanceViewSettings {
   public layer: string;
   public geometry: Geometry;
   public titleGeometry: TitleGeometry;
-  public connectors:InstanceConnector[];
+  public connectors: InstanceConnector[];
   public bottom: boolean;
   public locked: boolean;
   public layerHidden: boolean;
@@ -521,79 +521,92 @@ export class InstanceViewSettings {
   public removeConnectorAt(index: number): boolean {
     return this.connectors.splice(index, 1).length > 0;
   }
-
 }
 
 /**
- * @constructor
- * @class
  * @classdesc The additional settings for a wire {@link Instance}
  * @param {object} [params = {}] The constructor parameters for these WireExtras
  * @param {number} params.mils The thickness of the wire in milli-inches
  * @param {string} params.color The color of the wire as a 6 digit hexidecimal value denoted by the pound (#) sign
  * @param {number} params.opacity The opacity of the wire as a decimal value from 0 to 1
  * @param {boolean} [params.banded = false] Whether to display the wire with alternating bands of the given color and white in breadboard view
- * @param {Bezier} params.bezier Appears to be the Bezier curve used to describe the curvature of this wire {@link Instance} in breadboard view. Confirmation of this variable's purpose would be much appreciated
+ * @param {Bezier} params.bezier Appears to be the Bezier curve used to describe the curvature of this wire {@link Instance} in breadboard view.
+ * Confirmation of this variable's purpose would be much appreciated
  */
-var WireExtras = function(params = {}) {
-  this.mils = params.mils;
-  this.color = params.color;
-  this.opacity = params.opacity;
-  this.banded = params.banded || false;
-  this.bezier = params.bezier;
-};
+export class WireExtras {
+  public mils: number;
+  public color: string;
+  public opacity: number;
+  public banded: boolean;
+  public bezier: Bezier;
+
+  constructor(params: WireExtras) {
+    this.mils = params.mils;
+    this.color = params.color;
+    this.opacity = params.opacity;
+    this.banded = params.banded || false;
+    this.bezier = params.bezier;
+  }
+}
 
 /**
- * @constructor
- * @class
  * @extends InstanceViewSettings
  * @classdesc The view settings for a wire {@link Instance} in Fritzing
- * @param {object} [params = {}] The constructor parameters for these WireInstanceViewSettings
- * @param {string} params.name The name of the view associated with these WireInstanceViewSettings. The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
- * @param {string} params.layer The layer that these WireInstanceViewSettings are on inside the given view
- * @param {Geometry} params.geometry The {@link Geometry} of the corresponding wire {@link Instance} in the given view and layer
- * @param {TitleGeometry} params.titleGeometry The {@link TitleGeometry} of the corresponding wire {@link Instance} in the given view and layer
- * @param {InstanceConnector[]} [params.connectors = []] The {@link InstanceConnector}s for the corresponding wire {@link Instance} in the given view and layer
- * @param {boolean} [params.locked = false] Seems to prevent the corresponding wire {@link Instance} from moving in the given view and layer. Confirmation of this variable's purpose would be much appreciated
- * @param {boolean} [params.bottom = false] Seems to denote whether the corresponding wire {@link Instance} sticks to the "bottom" in the PCB view. Confirmation of this variable's purpose would be much appreciated
- * @param {boolean} [params.layersHidden = false] Seem to hide the corresponding wire {@link Instance} for silkscreen layers in the PCB view. Confirmation of this variable's purpose would be much appreciated
+ * @param {object} [params = {}] The constructor parameters for these WireInstanceViewSettings.
+ * @param {string} params.name The name of the view associated with these WireInstanceViewSettings.
+ * The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
+ * @param {string} params.layer The layer that these WireInstanceViewSettings are on inside the given view.
+ * @param {Geometry} params.geometry The {@link Geometry} of the corresponding wire {@link Instance} in the given view and layer.
+ * @param {TitleGeometry} params.titleGeometry The {@link TitleGeometry} of the corresponding wire {@link Instance} in the given view and layer.
+ * @param {InstanceConnector[]} [params.connectors = []] The {@link InstanceConnector}s for the corresponding wire {@link Instance}
+ * in the given view and layer.
+ * @param {boolean} [params.locked = false] Seems to prevent the corresponding wire {@link Instance} from moving in the given view and layer.
+ * Confirmation of this variable's purpose would be much appreciated.
+ * @param {boolean} [params.bottom = false] Seems to denote whether the corresponding wire {@link Instance} sticks to the "bottom" in the PCB view.
+ * Confirmation of this variable's purpose would be much appreciated.
+ * @param {boolean} [params.layersHidden = false] Seem to hide the corresponding wire {@link Instance} for silkscreen layers in the PCB view.
+ * Confirmation of this variable's purpose would be much appreciated
  * @param {WireExtras} params.wireExtras The additional settings for this wire {@link Instance}. See {@link WireExtras} for more
  */
-var WireInstanceViewSettings = function(params = {}) {
-  InstanceViewSettings.call(this, params);
-  this.wireExtras = params.wireExtras;
-};
+export class WireInstanceViewSettings extends InstanceViewSettings {
+  public wireExtras: WireExtras;
 
-WireInstanceViewSettings.prototype = Object.create(
-  InstanceViewSettings.prototype
-);
-WireInstanceViewSettings.prototype.constructor = WireInstanceViewSettings;
+  constructor(params: WireInstanceViewSettings) {
+    super(params);
+    this.wireExtras = params.wireExtras;
+  }
+}
 
 /**
- * @constructor
- * @class
- * @classdesc Appears to be a local connector within a {@link Instance} that cannot interact with other connectors outside the {@link Instance}. Confirmation of this variable's purpose would be much appreciated
- * @param {string} id The ID of this LocalConnector
- * @param {string} name The name of this LocalConnector
+ * @classdesc Appears to be a local connector within a {@link Instance} that cannot interact with other connectors outside the {@link Instance}.
+ * Confirmation of this variable's purpose would be much appreciated.
+ * @param {string} id The ID of this LocalConnector.
+ * @param {string} name The name of this LocalConnector.
  */
-var LocalConnector = function(id, name) {
-  this.id = id;
-  this.name = name;
-};
+export class LocalConnector {
+  public id: string;
+  public name: string;
+
+  constructor(params: LocalConnector) {
+    this.id = params.id;
+    this.name = params.name;
+  }
+}
 
 /**
- * @constructor
- * @class
  * @classdesc An instance of a {@link Part} within a {@link Sketch}
  * @param {object} [params = {}] The constructor parameters for this Instance
  * @param {string} params.moduleIdRef The module ID of the corresponding {@link Part}
  * @param {string} params.modelIndex The unique index of this Instance within a {@link Sketch}
- * @param {string} params.path The relative path to the corresponding {@link Part}. This variable is only a "hint", and has no real use in the Fritzing app
- * @param {Property[]} [params.properties = []] The {@link Property}'s of this Instance
- * @param {string} params.title The title of this Instance
- * @param {InstanceViewSettings} params.viewSettings The {@link InstanceViewSettings} of this Instance
- * @param {string} params.text Appears to be some arbitrary text associated with this Instance. Clarifaction of this variable's purpose would be much appreciated
- * @param {boolean} [params.flippedSMD = false] Appears to decide whether a SMD (Surface Mount Device) Instance is flipped. Confirmation of this variable's purpose would be much appreciated
+ * @param {string} params.path The relative path to the corresponding {@link Part}.
+ * This variable is only a "hint", and has no real use in the Fritzing app.
+ * @param {Property[]} [params.properties = []] The {@link Property}'s of this Instance.
+ * @param {string} params.title The title of this Instance.
+ * @param {InstanceViewSettings} params.viewSettings The {@link InstanceViewSettings} of this Instance.
+ * @param {string} params.text Appears to be some arbitrary text associated with this Instance.
+ * Clarifaction of this variable's purpose would be much appreciated.
+ * @param {boolean} [params.flippedSMD = false] Appears to decide whether a SMD (Surface Mount Device) Instance is flipped.
+ * Confirmation of this variable's purpose would be much appreciated.
  * @param {LocalConnector[]} [params.localConnectors = []] The {@link LocalConnector}s of this Instance
  */
 var Instance = function(params = {}) {
