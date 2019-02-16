@@ -190,7 +190,7 @@ export class TitleGeometry extends Geometry {
    * Adds a visible property to this TitleGeometry on the condition that it does not already exist
    * @param {string} visibleProperty The visible property to be added
    */
-  public setVisiblePropertyvisibleProperty(visibleProperty: string) {
+  public setVisiblePropertyvisibleProperty(visibleProperty: string): void {
     if (!this.hasVisibleProperty(visibleProperty)) {
       this.visibleProperties.push(visibleProperty);
     }
@@ -281,9 +281,9 @@ export class InstanceConnector {
   }
 
   /**
-   * Returns the leg data point at the given index
-   * @param {number} index The index of the leg data point
-   * @return {PointBezierPair} The leg data point at the given index
+   * Returns the leg data point at the given index.
+   * @param {number} index The index of the leg data point.
+   * @return {PointBezierPair} The leg data point at the given index.
    */
   public getLegDataPointAt(index: number): PointBezierPair {
     return this.leg[index];
@@ -293,7 +293,7 @@ export class InstanceConnector {
    * Adds a leg data point to this InstanceConnector on the condition that it does not already exist
    * @param {PointBezierPair} legDataPoint The leg data point to be added
    */
-  public setLegDataPoint(legDataPoint: PointBezierPair) {
+  public setLegDataPoint(legDataPoint: PointBezierPair): void {
     if (!this.hasLegDataPoint(legDataPoint)) {
       this.leg.push(legDataPoint);
     }
@@ -366,7 +366,7 @@ export class InstanceConnector {
    * with the same ID does not already exist.
    * @param {InstanceConnectorReference} connectorReference The {@link InstanceConnectorReference} to be added
    */
-  public setConnectorReference(connectorReference: InstanceConnectorReference) {
+  public setConnectorReference(connectorReference: InstanceConnectorReference): void {
     if (!this.hasConnectorReference(connectorReference.id)) {
       this.connectsTo.push(connectorReference);
     }
@@ -478,7 +478,7 @@ export class InstanceViewSettings {
    * with the same ID does not already exist.
    * @param {InstanceConnector} instanceConnector The {@link InstanceConnector} to be added
    */
-  public setConnector(instanceConnector: InstanceConnector) {
+  public setConnector(instanceConnector: InstanceConnector): void {
     if (!this.hasConnector(instanceConnector.id)) {
       this.connectors.push(instanceConnector);
     }
@@ -609,168 +609,172 @@ export class LocalConnector {
  * Confirmation of this variable's purpose would be much appreciated.
  * @param {LocalConnector[]} [params.localConnectors = []] The {@link LocalConnector}s of this Instance
  */
-var Instance = function(params = {}) {
-  this.moduleIdRef = params.moduleIdRef;
-  this.modelIndex = params.modelIndex;
-  this.path = params.path;
-  this.properties = params.properties || [];
-  this.title = params.title;
-  this.viewSettings = params.viewSettings || [];
-  this.text = params.text;
-  this.flippedSMD = params.flippedSMD || false;
-  this.localConnectors = params.localConnectors || [];
-};
+export class Instance {
+  public moduleIdRef: string;
+  public modelIndex: string;
+  public path: string;
+  public properties: Property[];
+  public title: string;
+  public viewSettings: InstanceViewSettings[];
+  public text: string;
+  public flippedSMD: boolean;
+  public localConnectors: LocalConnector[];
 
-/**
- * Returns the {@link Property} with the given name
- * @param {string} name The name of the {@link Property}
- * @return {Property} The {@link Property} with the given name
- */
-Instance.prototype.getProperty = function(name) {
-  var ret;
-  for (var i = 0; i < this.properties; i++) {
-    if (this.properties[i].name === name) {
-      ret = this.properties[i];
-      break;
+  constructor(params: Instance) {
+    this.moduleIdRef = params.moduleIdRef;
+    this.modelIndex = params.modelIndex;
+    this.path = params.path;
+    this.properties = params.properties || [];
+    this.title = params.title;
+    this.viewSettings = params.viewSettings || [];
+    this.text = params.text;
+    this.flippedSMD = params.flippedSMD || false;
+    this.localConnectors = params.localConnectors || [];
+  }
+
+  /**
+   * Returns the {@link Property} with the given name
+   * @param {string} name The name of the {@link Property}
+   * @return {Property} The {@link Property} with the given name
+   */
+  public getProperty(name: string): Property {
+    for (const property of this.properties) {
+      if (property.name === name) {
+        return property;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link Property} at the given index
+   * @param {number} index The index of the {@link Property}
+   * @return {Property} The {@link Property} at the given index
+   */
+  public getPropertyAt(index: number): Property {
+    return this.properties[index];
+  }
+
+  /**
+   * Adds a {@link Property} to this Instance on the condition that another {@link Property} with the same name does not already exist
+   * @param {Property} property The {@link Property} to be added
+   */
+  public setProperty(property: Property): void {
+    if (!this.hasProperty(property.name)) {
+      this.properties.push(property);
     }
   }
-  return ret;
-};
 
-/**
- * Returns the {@link Property} at the given index
- * @param {number} index The index of the {@link Property}
- * @return {Property} The {@link Property} at the given index
- */
-Instance.prototype.getPropertyAt = function(index) {
-  return this.properties[index];
-};
+  /**
+   * Returns whether this Instance has a {@link Property} with the given name
+   * @param {string} name The given name to search for
+   * @return {boolean} Whether this Instance has a {@link Property} with the given name
+   */
+  public hasProperty(name: string): boolean {
+    for (const property of this.properties) {
+      if (property.name === name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Adds a {@link Property} to this Instance on the condition that another {@link Property} with the same name does not already exist
- * @param {Property} property The {@link Property} to be added
- */
-Instance.prototype.setProperty = function(property) {
-  if (!this.hasProperty(property.name)) this.properties.push(property);
-};
+  /**
+   * Removes the {@link Property} with the given name
+   * @param {string} name The name of the {@link Property}
+   * @return {boolean} Whether a {@link Property} with the given name was removed
+   */
+  public removeProperty(name: string): boolean {
+    for (const property of this.properties) {
+      if (property.name === name) {
+        this.properties.splice(this.properties.findIndex(x => x.name === name), 1);
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Returns whether this Instance has a {@link Property} with the given name
- * @param {string} name The given name to search for
- * @return {boolean} Whether this Instance has a {@link Property} with the given name
- */
-Instance.prototype.hasProperty = function(name) {
-  var has = false;
-  for (var i = 0; i < this.properties.length; i++) {
-    if (this.properties[i].name === name) {
-      has = true;
-      break;
+  /**
+   * Removes the {@link Property} at the given index
+   * @param {number} index The index of the {@link Property}
+   * @return {boolean} Whether a {@link Property} at the given index was removed
+   */
+  public removePropertyAt(index: number): boolean {
+    return this.properties.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link LocalConnector} with the given ID
+   * @param {string} id The ID of the {@link LocalConnector}
+   * @return {LocalConnector} The {@link LocalConnector} with the given ID
+   */
+  public getLocalConnector(id: string): LocalConnector {
+    for (const connector of this.localConnectors) {
+      if (connector.id === id) {
+        return connector;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link LocalConnector} at the given index
+   * @param {number} index The index of the {@link LocalConnector}
+   * @return {LocalConnector} The {@link LocalConnector} at the given index
+   */
+  public getLocalConnectorAt(index: number): LocalConnector {
+    return this.localConnectors[index];
+  }
+
+  /**
+   * Adds a {@link LocalConnector} to this Instance on the condition that another {@link LocalConnector} with the same ID does not already exist
+   * @param {LocalConnector} localConnector The {@link LocalConnector} to be added
+   */
+  public setLocalConnector(localConnector: LocalConnector): void {
+    if (!this.hasLocalConnector(localConnector.id)) {
+      this.localConnectors.push(localConnector);
     }
   }
-  return has;
-};
 
-/**
- * Removes the {@link Property} with the given name
- * @param {string} name The name of the {@link Property}
- * @return {boolean} Whether a {@link Property} with the given name was removed
- */
-Instance.prototype.removeProperty = function(name) {
-  var removed = false;
-  for (var i = 0; i < this.properties.length; i++) {
-    if (this.properties[i].name === name) {
-      this.properties.splice(i, 1);
-      removed = true;
-      break;
+  /**
+   * Returns whether this Instance has a {@link LocalConnector} with the given ID
+   * @param {string} id The given ID to search for
+   * @return {boolean} Whether this Instance has a {@link LocalConnector} with the given ID
+   */
+  public hasLocalConnector(id: string): boolean {
+    for (const connector of this.localConnectors) {
+      if (connector.id === id) {
+        return true;
+      }
     }
+    return false;
   }
-  return removed;
-};
 
-/**
- * Removes the {@link Property} at the given index
- * @param {number} index The index of the {@link Property}
- * @return {boolean} Whether a {@link Property} at the given index was removed
- */
-Instance.prototype.removePropertyAt = function(index) {
-  return this.properties.splice(index, 1).length > 0;
-};
-
-/**
- * Returns the {@link LocalConnector} with the given ID
- * @param {string} id The ID of the {@link LocalConnector}
- * @return {LocalConnector} The {@link LocalConnector} with the given ID
- */
-Instance.prototype.getLocalConnector = function(id) {
-  var ret;
-  for (var i = 0; i < this.localConnectors; i++) {
-    if (this.localConnectors[i].id === id) {
-      ret = this.localConnectors[i];
-      break;
+  /**
+   * Removes the {@link LocalConnector} with the given ID
+   * @param {string} id The ID of the {@link LocalConnector}
+   * @return {boolean} Whether a {@link LocalConnector} with the given ID was removed
+   */
+  public removeLocalConnector(id: string): boolean {
+    for (const connector of this.localConnectors) {
+      if (connector.id === id) {
+        this.localConnectors.splice(this.localConnectors.findIndex(x => x.id === id));
+        return true;
+      }
     }
+    return false;
   }
-  return ret;
-};
 
-/**
- * Returns the {@link LocalConnector} at the given index
- * @param {number} index The index of the {@link LocalConnector}
- * @return {LocalConnector} The {@link LocalConnector} at the given index
- */
-Instance.prototype.getLocalConnectorAt = function(index) {
-  return this.localConnectors[index];
-};
-
-/**
- * Adds a {@link LocalConnector} to this Instance on the condition that another {@link LocalConnector} with the same ID does not already exist
- * @param {LocalConnector} localConnector The {@link LocalConnector} to be added
- */
-Instance.prototype.setLocalConnector = function(localConnector) {
-  if (!this.hasLocalConnector(localConnector.id))
-    this.localConnectors.push(localConnector);
-};
-
-/**
- * Returns whether this Instance has a {@link LocalConnector} with the given ID
- * @param {string} id The given ID to search for
- * @return {boolean} Whether this Instance has a {@link LocalConnector} with the given ID
- */
-Instance.prototype.hasLocalConnector = function(id) {
-  var has = false;
-  for (var i = 0; i < this.localConnectors.length; i++) {
-    if (this.localConnectors[i].id === id) {
-      has = true;
-      break;
-    }
+  /**
+   * Removes the {@link LocalConnector} at the given index
+   * @param {number} index The index of the {@link LocalConnector}
+   * @return {boolean} Whether a {@link LocalConnector} at the given index was removed
+   */
+  public removeLocalConnectorAt(index: number): boolean {
+    return this.localConnectors.splice(index, 1).length > 0;
   }
-  return has;
-};
+}
 
-/**
- * Removes the {@link LocalConnector} with the given ID
- * @param {string} id The ID of the {@link LocalConnector}
- * @return {boolean} Whether a {@link LocalConnector} with the given ID was removed
- */
-Instance.prototype.removeLocalConnector = function(id) {
-  var removed = false;
-  for (var i = 0; i < this.localConnectors.length; i++) {
-    if (this.localConnectors[i].id === id) {
-      this.localConnectors.splice(i, 1);
-      removed = true;
-      break;
-    }
-  }
-  return removed;
-};
-
-/**
- * Removes the {@link LocalConnector} at the given index
- * @param {number} index The index of the {@link LocalConnector}
- * @return {boolean} Whether a {@link LocalConnector} at the given index was removed
- */
-Instance.prototype.removeLocalConnectorAt = function(index) {
-  return this.localConnectors.splice(index, 1).length > 0;
-};
 
 /**
  * @constructor
