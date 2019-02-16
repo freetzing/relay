@@ -775,26 +775,29 @@ export class Instance {
   }
 }
 
-
 /**
- * @constructor
- * @class
  * @classdesc A program file
- * @param {string} pid The unique ID of a Fritzing application used here to decide whether this Program should be accessed via FZZ or its full path. If the given PID matches the Fritzing application opening this Program, then the full path is used
- * @param {string} language The programming language that this Program is written in
- * @param {string} author The author of this Program
- * @param {string} path The path to this Program in the file system
+ * @param {string} pid The unique ID of a Fritzing application used here to decide whether this Program should be accessed via FZZ or its full path.
+ * If the given PID matches the Fritzing application opening this Program, then the full path is used.
+ * @param {string} language The programming language that this Program is written in.
+ * @param {string} author The author of this Program.
+ * @param {string} path The path to this Program in the file system.
  */
-var Program = function(pid, language, author, path) {
-  this.pid = pid;
-  this.language = language;
-  this.author = author;
-  this.path = path;
-};
+export class Program {
+  public pid: string;
+  public language: string;
+  public author: string;
+  public path: string;
+
+  constructor(params: Program) {
+    this.pid = params.pid;
+    this.language = params.language;
+    this.author = params.author;
+    this.path = params.path;
+  }
+}
 
 /**
- * @constructor
- * @class
  * @classdesc A PCB (Printed Circuit Board) in a {@link Sketch}
  * @param {object} [params = {}] The constructor parameters for this Board
  * @param {string} params.moduleId The module ID of the {@link Part} associated with this Board
@@ -803,66 +806,90 @@ var Program = function(pid, language, author, path) {
  * @param {string} params.width The width of this Board in virtual space
  * @param {string} params.height The height of this Board in virtual space
  */
-var Board = function(params = {}) {
-  this.moduleId = params.moduleId;
-  this.title = params.title;
-  this.instance = params.instance;
-  this.width = params.width;
-  this.height = params.height;
-};
+export class Board {
+  public moduleId: string;
+  public title: string;
+  public instance: string;
+  public width: string;
+  public height: string;
+
+  constructor(params: Board) {
+    this.moduleId = params.moduleId;
+    this.title = params.title;
+    this.instance = params.instance;
+    this.width = params.width;
+    this.height = params.height;
+  }
+}
 
 /**
- * @constructor
- * @class
  * @classdesc The view settings for a {@link Sketch} in Fritzing
- * @param {object} [params = {}] The constructor parameters for these SketchViewSettings
- * @param {string} params.name The name of the view associated with these SketchViewSettings. The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
- * @param {string} params.backgroundColor The background color of the associated view as a 6 digit hexidecimal value denoted by the pound (#) sign
- * @param {string} params.gridSize The width and height of a square in the associated view's grid
- * @param {boolean} [params.showGrid = true] Whether to show the grid in the associated view
+ * @param {object} [params = {}] The constructor parameters for these SketchViewSettings.
+ * @param {string} params.name The name of the view associated with these SketchViewSettings.
+ * The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**.
+ * @param {string} params.backgroundColor The background color of the associated view as a 6 digit hexidecimal value denoted by the pound (#) sign.
+ * @param {string} params.gridSize The width and height of a square in the associated view's grid.
+ * @param {boolean} [params.showGrid = true] Whether to show the grid in the associated view.
  * @param {boolean} [params.alignToGrid = false] Whether a {@link Sketch} should be aligned to the grid of the associated view
- * @param {viewFromBelow} [params.viewFromBelow = false] Appears to decide whether a {@link Sketch} can be viewed from below. Confirmation of this variable's purpose would be much appreciated
+ * @param {viewFromBelow} [params.viewFromBelow = false] Appears to decide whether a {@link Sketch} can be viewed from below.
+ * Confirmation of this variable's purpose would be much appreciated.
  */
-var SketchViewSettings = function(params = {}) {
-  this.name = params.name;
-  this.backgroundColor = params.backgroundColor;
-  this.gridSize = params.gridSize;
-  this.showGrid = params.showGrid || true;
-  this.alignToGrid = params.alignToGrid || false;
-  this.viewFromBelow = params.viewFromBelow || false;
-};
+export class SketchViewSettings {
+  public name: string;
+  public backgroundColor: string;
+  public gridSize: string;
+  public showGrid: boolean;
+  public alignToGrid: boolean;
+  public viewFromBelow: boolean;
+
+  constructor(params: SketchViewSettings) {
+    this.name = params.name;
+    this.backgroundColor = params.backgroundColor;
+    this.gridSize = params.gridSize;
+    this.showGrid = params.showGrid || true;
+    this.alignToGrid = params.alignToGrid || false;
+    this.viewFromBelow = params.viewFromBelow || false;
+  }
+}
 
 /**
- * @constructor
- * @class
  * @extends SketchViewSettings
- * @classdesc The PCB view settings for a {@link Sketch} in Fritzing
- * @param {object} [params = {}] The constructor parameters for these SketchPCBViewSettings
- * @param {string} params.name The name of the view associated with these SketchPCBViewSettings. The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
+ * @classdesc The PCB view settings for a {@link Sketch} in Fritzing.
+ * @param {object} [params = {}] The constructor parameters for these SketchPCBViewSettings.
+ * @param {string} params.name The name of the view associated with these SketchPCBViewSettings.
+ * The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
  * @param {string} params.backgroundColor The background color of the associated view as a 6 digit hexidecimal value denoted by the pound (#) sign
- * @param {string} params.gridSize The width and height of a square in the associated view's grid
- * @param {boolean} [params.showGrid = true] Whether to show the grid in the associated view
- * @param {boolean} [params.alignToGrid = false] Whether a {@link Sketch} should be aligned to the grid of the associated view
- * @param {viewFromBelow} [params.viewFromBelow = false] Appears to decide whether a {@link Sketch} can be viewed from below. Confirmation of this variable's purpose would be much appreciated
- * @param {string} params.arHoleSize Beyond its association with autorouting, this variable's purpose is unknown
- * @param {string} params.arTraceWidth Beyond its association with autorouting, this variable's purpose is unknown
- * @param {string} params.arRingWidth Beyond its association with autorouting, this variable's purpose is unknown
- * @param {string} params.keepoutDRC Beyond its association with autorouting, this variable's purpose is unknown
- * @param {string} params.keepoutGPG Beyond its association with autorouting, this variable's purpose is unknown
+ * @param {string} params.gridSize The width and height of a square in the associated view's grid.
+ * @param {boolean} [params.showGrid = true] Whether to show the grid in the associated view.
+ * @param {boolean} [params.alignToGrid = false] Whether a {@link Sketch} should be aligned to the grid of the associated view.
+ * @param {viewFromBelow} [params.viewFromBelow = false] Appears to decide whether a {@link Sketch} can be viewed from below.
+ * Confirmation of this variable's purpose would be much appreciated.
+ * @param {string} params.arHoleSize Beyond its association with autorouting, this variable's purpose is unknown.
+ * @param {string} params.arTraceWidth Beyond its association with autorouting, this variable's purpose is unknown.
+ * @param {string} params.arRingWidth Beyond its association with autorouting, this variable's purpose is unknown.
+ * @param {string} params.keepoutDRC Beyond its association with autorouting, this variable's purpose is unknown.
+ * @param {string} params.keepoutGPG Beyond its association with autorouting, this variable's purpose is unknown.
  */
-var SketchPCBViewSettings = function(params = {}) {
-  SketchViewSettings.call(this, params);
-  this.arHoleSize = params.arHoleSize;
-  this.arTraceWidth = params.arTraceWidth;
-  this.arRingWidth = params.arRingWidth;
-  this.keepoutDRC = params.keepoutDRC;
-  this.keepoutGPG = params.keepoutGPG;
-};
+export class SketchPCBViewSettings extends SketchViewSettings {
+  public arHoleSize: string;
+  public arTraceWidth: string;
+  public arRingWidth: string;
+  public keepoutDRC: string;
+  public keepoutGPG: string;
+
+  constructor(params: SketchPCBViewSettings) {
+    super(params);
+    this.arHoleSize = params.arHoleSize;
+    this.arTraceWidth = params.arTraceWidth;
+    this.arRingWidth = params.arRingWidth;
+    this.keepoutDRC = params.keepoutDRC;
+    this.keepoutGPG = params.keepoutGPG;
+  }
+}
 
 /**
- * @constructor
- * @class
- * @classdesc A Fritzing Sketch. In Fritzing, a Sketch is an abstract collection of Parts arranged together in some fashion in different views. A Sketch can also be considered a project because it contains other metadata like {@link Program}s that go with a specific circuit
+ * @classdesc A Fritzing Sketch. In Fritzing, a Sketch is an abstract collection of Parts arranged together in some fashion in different views.
+ * A Sketch can also be considered a project because it contains other metadata like {@link Program}s that go with a specific circuit.
  * @param {object} [params = {}] The constructor parameters for this Sketch
  * @param {string} params.fritzingVersion The version of Fritzing used to build this Sketch
  * @param {Program[]} params.programs The {@link Program}s of this Sketch
@@ -870,283 +897,277 @@ var SketchPCBViewSettings = function(params = {}) {
  * @param {SketchViewSettings[]} params.viewSettings The {@link SketchViewSettings} of this Sketch
  * @param {Instance[]} params.instances The {@link Instance}s of this Sketch
  */
-var Sketch = function(params = {}) {
-  this.fritzingVersion = params.fritzingVersion;
-  this.programs = params.programs || [];
-  this.boards = params.boards || [];
-  this.viewSettings = params.viewSettings || [];
-  this.instances = params.instances || [];
-};
+export class Sketch {
+  public fritzingVersion: string;
+  public programs: Program[];
+  public boards: Board[];
+  public viewSettings: SketchViewSettings[];
+  public instances: Instance[];
 
-/**
- * Returns the program at the given index
- * @param {number} index The index of the program
- * @return {Program} The program at the given index
- */
-Sketch.prototype.getProgramAt = function(index) {
-  return this.programs[index];
-};
+  constructor(params: Sketch) {
+    this.fritzingVersion = params.fritzingVersion;
+    this.programs = params.programs || [];
+    this.boards = params.boards || [];
+    this.viewSettings = params.viewSettings || [];
+    this.instances = params.instances || [];
+  }
+
+  /**
+   * Returns the program at the given index
+   * @param {number} index The index of the program
+   * @return {Program} The program at the given index
+   */
+  public getProgramAt(index: number): Program {
+    return this.programs[index];
+  }
 
 /**
  * Adds a program to this Sketch on the condition that it does not already exist
  * @param {Program} program The program to be added
  */
-Sketch.prototype.setProgram = function(program) {
-  if (!this.hasProgram(program)) this.programs.push(program);
-};
+  public setProgram(program: Program): void {
+    if (!this.hasProgram(program)) {
+      this.programs.push(program);
+    }
+  }
 
 /**
  * Returns whether this Sketch has the given program
  * @param {Program} program The given program to search for
  * @return {boolean} Whether this Sketch has the given program
  */
-Sketch.prototype.hasProgram = function(program) {
-  var has = false;
-  for (var i = 0; i < this.programs.length; i++) {
-    if (this.programs[i] === program) {
-      has = true;
-      break;
+  public hasProgram(program: Program): boolean {
+    for (const programItem of this.programs) {
+      if (programItem === program) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the given program
+   * @param {Program} program The program to be removed
+   * @return {boolean} Whether the given program was removed
+   */
+  public removeProgram(program: Program): boolean {
+    for (const programItem of this.programs) {
+      if (programItem === program) {
+        this.programs.splice(this.programs.findIndex(x => x === program), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the program at the given index
+   * @param {number} index The index of the program
+   * @return {boolean} Whether the program at the given index was removed
+   */
+  public removeProgramAt(index: number): boolean {
+    return this.programs.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the board at the given index
+   * @param {number} index The index of the board
+   * @return {Board} The board at the given index
+   */
+  public getBoardAt(index: number): Board {
+    return this.boards[index];
+  }
+
+  /**
+   * Adds a board to this Sketch on the condition that it does not already exist
+   * @param {Board} board The board to be added
+   */
+  public setBoard(board: Board): void {
+    if (!this.hasBoard(board)) {
+      this.boards.push(board);
     }
   }
-  return has;
-};
 
-/**
- * Removes the given program
- * @param {Program} program The program to be removed
- * @return {boolean} Whether the given program was removed
- */
-Sketch.prototype.removeProgram = function(program) {
-  var removed = false;
-  for (var i = 0; i < this.programs.length; i++) {
-    if (this.programs[i] === program) {
-      this.programs.splice(i, 1);
-      removed = true;
-      break;
+  /**
+   * Returns whether this Sketch has the given board
+   * @param {Board} board The given board to search for
+   * @return {boolean} Whether this Sketch has the given board
+   */
+  public hasBoard(board: Board): boolean {
+    for (const boardItem of this.boards) {
+      if (boardItem === board) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the given board
+   * @param {Board} board The board to be removed
+   * @return {boolean} Whether the given board was removed
+   */
+  public removeBoard(board: Board): boolean {
+    for (const boardItem of this.boards) {
+      if (boardItem === board) {
+        this.boards.splice(this.boards.findIndex(x => x === boardItem), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the board at the given index
+   * @param {number} index The index of the board
+   * @return {boolean} Whether the board at the given index was removed
+   */
+  public removeBoardAt(index: number): boolean {
+    return this.boards.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link SketchViewSettings} with the given name
+   * @param {string} name The name of the {@link SketchViewSettings}
+   * @return {SketchViewSettings} The {@link SketchViewSettings} with the given name
+   */
+  public getViewSettings(name: string): SketchViewSettings {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        return settingItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link SketchViewSettings} at the given index
+   * @param {number} index The index of the {@link SketchViewSettings}
+   * @return {SketchViewSettings} The {@link SketchViewSettings} at the given index
+   */
+  public getViewSettingsAt(index: number): SketchViewSettings {
+    return this.viewSettings[index];
+  }
+
+  /**
+   * Adds a {@link SketchViewSettings} to this Sketch on the condition that another {@link SketchViewSettings}
+   * with the same name does not already exist.
+   * @param {SketchViewSettings} viewSettings The {@link SketchViewSettings} to be added
+   */
+  public setViewSettings(viewSettings: SketchViewSettings): void {
+    if (!this.hasViewSettings(viewSettings.name)) {
+      this.viewSettings.push(viewSettings);
     }
   }
-  return removed;
-};
 
-/**
- * Removes the program at the given index
- * @param {number} index The index of the program
- * @return {boolean} Whether the program at the given index was removed
- */
-Sketch.prototype.removeProgramAt = function(index) {
-  return this.programs.splice(index, 1).length > 0;
-};
+  /**
+   * Returns whether this Sketch has a {@link SketchViewSettings} with the given name
+   * @param {string} name The given name to search for
+   * @return {boolean} Whether this Sketch has a {@link SketchViewSettings} with the given name
+   */
+  public hasViewSettings(name: string): boolean {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Returns the board at the given index
- * @param {number} index The index of the board
- * @return {Board} The board at the given index
- */
-Sketch.prototype.getBoardAt = function(index) {
-  return this.boards[index];
-};
+  /**
+   * Removes the {@link SketchViewSettings} with the given name
+   * @param {string} name The name of the {@link SketchViewSettings}
+   * @return {boolean} Whether a {@link SketchViewSettings} with the given name was removed
+   */
+  public removeViewSettings(name: string): boolean {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        this.viewSettings.splice(this.viewSettings.findIndex(x => x.name === name), 1);
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Adds a board to this Sketch on the condition that it does not already exist
- * @param {Board} board The board to be added
- */
-Sketch.prototype.setBoard = function(board) {
-  if (!this.hasBoard(board)) this.boards.push(board);
-};
+  /**
+   * Removes the {@link SketchViewSettings} at the given index
+   * @param {number} index The index of the {@link SketchViewSettings}
+   * @return {boolean} Whether a {@link SketchViewSettings} at the given index was removed
+   */
+  public removeViewSettingsAt(index: number): boolean {
+    return this.viewSettings.splice(index, 1).length > 0;
+  }
 
-/**
- * Returns whether this Sketch has the given board
- * @param {Board} board The given board to search for
- * @return {boolean} Whether this Sketch has the given board
- */
-Sketch.prototype.hasBoard = function(board) {
-  var has = false;
-  for (var i = 0; i < this.boards.length; i++) {
-    if (this.boards[i] === board) {
-      has = true;
-      break;
+  /**
+   * Returns the {@link Instance} with the given model index
+   * @param {string} modelIndex The model index of the {@link Instance}
+   * @return {Instance} The {@link Instance} with the given model index
+   */
+  public getInstance(modelIndex: string): Instance {
+    for (const instanceItem of this.instances) {
+      if (instanceItem.modelIndex === modelIndex) {
+        return instanceItem;
+      }
     }
   }
-  return has;
-};
 
-/**
- * Removes the given board
- * @param {Board} board The board to be removed
- * @return {boolean} Whether the given board was removed
- */
-Sketch.prototype.removeBoard = function(board) {
-  var removed = false;
-  for (var i = 0; i < this.boards.length; i++) {
-    if (this.boards[i] === board) {
-      this.boards.splice(i, 1);
-      removed = true;
-      break;
+  /**
+   * Returns the {@link Instance} at the given index
+   * @param {number} index The index of the {@link Instance}
+   * @return {Instance} The {@link Instance} at the given index
+   */
+  public getInstanceAt(index: number): Instance {
+    return this.instances[index];
+  }
+
+  /**
+   * Adds a {@link Instance} to this Sketch on the condition that another {@link Instance} with the same model index does not already exist
+   * @param {Instance} instance The {@link Instance} to be added
+   */
+  public setInstance(instance: Instance): void {
+    if (!this.hasInstance(instance.modelIndex)) {
+      this.instances.push(instance);
     }
   }
-  return removed;
-};
 
-/**
- * Removes the board at the given index
- * @param {number} index The index of the board
- * @return {boolean} Whether the board at the given index was removed
- */
-Sketch.prototype.removeBoardAt = function(index) {
-  return this.boards.splice(index, 1).length > 0;
-};
-
-/**
- * Returns the {@link SketchViewSettings} with the given name
- * @param {string} name The name of the {@link SketchViewSettings}
- * @return {SketchViewSettings} The {@link SketchViewSettings} with the given name
- */
-Sketch.prototype.getViewSettings = function(name) {
-  var ret;
-  for (var i = 0; i < this.viewSettings; i++) {
-    if (this.viewSettings[i].name === name) {
-      ret = this.viewSettings[i];
-      break;
+  /**
+   * Returns whether this Sketch has a {@link Instance} with the given model index
+   * @param {string} modelIndex The given model index to search for
+   * @return {boolean} Whether this Sketch has a {@link Instance} with the given model index
+   */
+  public hasInstance(modelIndex: string): boolean {
+    for (const instanceItem of this.instances) {
+      if (instanceItem.modelIndex === modelIndex) {
+        return true;
+      }
     }
+    return false;
   }
-  return ret;
-};
 
-/**
- * Returns the {@link SketchViewSettings} at the given index
- * @param {number} index The index of the {@link SketchViewSettings}
- * @return {SketchViewSettings} The {@link SketchViewSettings} at the given index
- */
-Sketch.prototype.getViewSettingsAt = function(index) {
-  return this.viewSettings[index];
-};
-
-/**
- * Adds a {@link SketchViewSettings} to this Sketch on the condition that another {@link SketchViewSettings} with the same name does not already
-exist
- * @param {SketchViewSettings} viewSettings The {@link SketchViewSettings} to be added
- */
-Sketch.prototype.setViewSettings = function(viewSettings) {
-  if (!this.hasViewSettings(viewSettings.name))
-    this.viewSettings.push(viewSettings);
-};
-
-/**
- * Returns whether this Sketch has a {@link SketchViewSettings} with the given name
- * @param {string} name The given name to search for
- * @return {boolean} Whether this Sketch has a {@link SketchViewSettings} with the given name
- */
-Sketch.prototype.hasViewSettings = function(name) {
-  var has = false;
-  for (var i = 0; i < this.viewSettings.length; i++) {
-    if (this.viewSettings[i].name === name) {
-      has = true;
-      break;
+  /**
+   * Removes the {@link Instance} with the given model index
+   * @param {string} modelIndex The model index of the {@link Instance}
+   * @return {boolean} Whether a {@link Instance} with the given model index was removed
+   */
+  public removeInstance(modelIndex: string): boolean {
+    for (const instanceItem of this.instances) {
+      if (instanceItem.modelIndex === modelIndex) {
+        this.instances.splice(this.instances.findIndex(x => x.modelIndex === modelIndex), 1);
+        return true;
+      }
     }
+    return false;
   }
-  return has;
-};
 
-/**
- * Removes the {@link SketchViewSettings} with the given name
- * @param {string} name The name of the {@link SketchViewSettings}
- * @return {boolean} Whether a {@link SketchViewSettings} with the given name was removed
- */
-Sketch.prototype.removeViewSettings = function(name) {
-  var removed = false;
-  for (var i = 0; i < this.viewSettings.length; i++) {
-    if (this.viewSettings[i].name === name) {
-      this.viewSettings.splice(i, 1);
-      removed = true;
-      break;
-    }
+  /**
+   * Removes the {@link Instance} at the given index
+   * @param {number} index The index of the {@link Instance}
+   * @return {boolean} Whether a {@link Instance} at the given index was removed
+   */
+  public removeInstanceAt(index: number): boolean {
+    return this.instances.splice(index, 1).length > 0;
   }
-  return removed;
-};
-
-/**
- * Removes the {@link SketchViewSettings} at the given index
- * @param {number} index The index of the {@link SketchViewSettings}
- * @return {boolean} Whether a {@link SketchViewSettings} at the given index was removed
- */
-Sketch.prototype.removeViewSettingsAt = function(index) {
-  return this.viewSettings.splice(index, 1).length > 0;
-};
-
-/**
- * Returns the {@link Instance} with the given model index
- * @param {number} modelIndex The model index of the {@link Instance}
- * @return {Instance} The {@link Instance} with the given model index
- */
-Sketch.prototype.getInstance = function(modelIndex) {
-  var ret;
-  for (var i = 0; i < this.instances; i++) {
-    if (this.instances[i].modelIndex === modelIndex) {
-      ret = this.instances[i];
-      break;
-    }
-  }
-  return ret;
-};
-
-/**
- * Returns the {@link Instance} at the given index
- * @param {number} index The index of the {@link Instance}
- * @return {Instance} The {@link Instance} at the given index
- */
-Sketch.prototype.getInstanceAt = function(index) {
-  return this.instances[index];
-};
-
-/**
- * Adds a {@link Instance} to this Sketch on the condition that another {@link Instance} with the same model index does not already exist
- * @param {Instance} instance The {@link Instance} to be added
- */
-Sketch.prototype.setInstance = function(instance) {
-  if (!this.hasInstance(instance.modelIndex)) this.instances.push(instance);
-};
-
-/**
- * Returns whether this Sketch has a {@link Instance} with the given model index
- * @param {number} modelIndex The given model index to search for
- * @return {boolean} Whether this Sketch has a {@link Instance} with the given model index
- */
-Sketch.prototype.hasInstance = function(modelIndex) {
-  var has = false;
-  for (var i = 0; i < this.instances.length; i++) {
-    if (this.instances[i].modelIndex === modelIndex) {
-      has = true;
-      break;
-    }
-  }
-  return has;
-};
-
-/**
- * Removes the {@link Instance} with the given model index
- * @param {number} modelIndex The model index of the {@link Instance}
- * @return {boolean} Whether a {@link Instance} with the given model index was removed
- */
-Sketch.prototype.removeInstance = function(modelIndex) {
-  var removed = false;
-  for (var i = 0; i < this.instances.length; i++) {
-    if (this.instances[i].modelIndex === modelIndex) {
-      this.instances.splice(i, 1);
-      removed = true;
-      break;
-    }
-  }
-  return removed;
-};
-
-/**
- * Removes the {@link Instance} at the given index
- * @param {number} index The index of the {@link Instance}
- * @return {boolean} Whether a {@link Instance} at the given index was removed
- */
-Sketch.prototype.removeInstanceAt = function(index) {
-  return this.instances.splice(index, 1).length > 0;
-};
+}
 
 /**
  * Returns this Sketch as a string of FZ XML
