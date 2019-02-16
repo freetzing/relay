@@ -1,3 +1,5 @@
+import xml2js = require("xml2js");
+import { ObjectUtilities } from "../utils/object.utils";
 import { Point, Property } from "./global.model";
 
 /**
@@ -613,23 +615,23 @@ export class Instance {
   public moduleIdRef: string;
   public modelIndex: string;
   public path: string;
-  public properties: Property[];
+  public properties: Property[] | any[];
   public title: string;
-  public viewSettings: InstanceViewSettings[];
+  public viewSettings: InstanceViewSettings[] | any[];
   public text: string;
-  public flippedSMD: boolean;
-  public localConnectors: LocalConnector[];
+  public flippedSMD: boolean = false;
+  public localConnectors: LocalConnector[] | any[];
 
   constructor(params: Instance) {
     this.moduleIdRef = params.moduleIdRef;
     this.modelIndex = params.modelIndex;
     this.path = params.path;
-    this.properties = params.properties || [];
+    this.properties = params.properties;
     this.title = params.title;
-    this.viewSettings = params.viewSettings || [];
+    this.viewSettings = params.viewSettings;
     this.text = params.text;
-    this.flippedSMD = params.flippedSMD || false;
-    this.localConnectors = params.localConnectors || [];
+    this.flippedSMD = params.flippedSMD;
+    this.localConnectors = params.localConnectors;
   }
 
   /**
@@ -898,6 +900,16 @@ export class SketchPCBViewSettings extends SketchViewSettings {
  * @param {Instance[]} params.instances The {@link Instance}s of this Sketch
  */
 export class Sketch {
+  /**
+   * @static
+   * Returns the given Sketch as a string of FZ XML
+   * @param {Sketch} sketch The given Sketch
+   * @return {string} The given Sketch as a string of FZ XML
+   */
+  public static toFZ(sketch: Sketch): string {
+    return sketch.toFZ();
+  }
+
   public fritzingVersion: string;
   public programs: Program[];
   public boards: Board[];
@@ -921,21 +933,21 @@ export class Sketch {
     return this.programs[index];
   }
 
-/**
- * Adds a program to this Sketch on the condition that it does not already exist
- * @param {Program} program The program to be added
- */
+  /**
+   * Adds a program to this Sketch on the condition that it does not already exist
+   * @param {Program} program The program to be added
+   */
   public setProgram(program: Program): void {
     if (!this.hasProgram(program)) {
       this.programs.push(program);
     }
   }
 
-/**
- * Returns whether this Sketch has the given program
- * @param {Program} program The given program to search for
- * @return {boolean} Whether this Sketch has the given program
- */
+  /**
+   * Returns whether this Sketch has the given program
+   * @param {Program} program The given program to search for
+   * @return {boolean} Whether this Sketch has the given program
+   */
   public hasProgram(program: Program): boolean {
     for (const programItem of this.programs) {
       if (programItem === program) {
@@ -1167,391 +1179,239 @@ export class Sketch {
   public removeInstanceAt(index: number): boolean {
     return this.instances.splice(index, 1).length > 0;
   }
-}
 
-/**
- * Returns this Sketch as a string of FZ XML
- * @return {string} This Sketch as a string of FZ XML
- */
-Sketch.prototype.toFZ = function() {
-  var i;
-  var j;
-  var c;
-  var d;
-  var viewSetting;
-  var viewSettings1;
-  var moduleView;
-  var geometry;
-  var bezier;
-  var cp0;
-  var cp1;
+  /**
+   * Returns this Sketch as a string of FZ XML
+   * @return {string} This Sketch as a string of FZ XML
+   */
+  public toFZ(): string {
 
-  function setOptionalValue(obj, key, value) {
-    if (value) {
-      obj[key] = value;
-    }
-  }
-
-  var module = {
-    $: {
-      fritzingVersion: this.fritzingVersion
-    },
-    views: {
-      view: []
-    },
-    instances: {
-      instance: []
-    }
-  };
-
-  if (this.boards.length > 0) {
-    module.boards = {
-      board: []
+    const moduleObj: any = {
+      $: { fritzingVersion: this.fritzingVersion },
+      instances: { instance: [] },
+      views: { view: [] },
     };
-    var moduleBoards = module.boards.board;
-    var boards = this.boards;
-    for (i = 0; i < boards.length; i++) {
-      var board = boards[i];
-      moduleBoards.push({
-        $: {
-          moduleId: board.moduleId,
-          title: board.title,
-          instance: board.instance,
-          width: board.width,
-          height: board.height
-        }
-      });
-    }
-  }
 
-  if (this.programs.length > 0) {
-    module.programs = {
-      $: {
-        pid: this.programs[0].pid
-      },
-      program: []
-    };
-    var modulePrograms = module.programs.program;
-    var programs = this.programs;
-    for (i = 0; i < programs.length; i++) {
-      var program = programs[i];
-      modulePrograms.push({
-        $: {
-          language: program.language,
-          programmer: program.author
-        },
-        _: program.path
-      });
-    }
-  }
-
-  var moduleViews = module.views.view;
-  var viewSettings = this.viewSettings;
-  for (i = 0; i < viewSettings.length; i++) {
-    viewSetting = viewSettings[i];
-    moduleView = {
-      $: {
-        name: viewSetting.name + "View",
-        showGrid: viewSetting.showGrid ? 1 : 0,
-        alignToGrid: viewSetting.alignToGrid ? 1 : 0,
-        viewFromBelow: viewSetting.viewFromBelow ? 1 : 0
-      }
-    };
-    setOptionalValue(
-      moduleView.$,
-      "backgroundColor",
-      viewSetting.backgroundColor
-    );
-    setOptionalValue(moduleView.$, "gridSize", viewSetting.gridSize);
-    if (viewSetting instanceof SketchPCBViewSettings) {
-      setOptionalValue(
-        moduleView.$,
-        "autorouteViaHoleSize",
-        viewSetting.arHoleSize
-      );
-      setOptionalValue(
-        moduleView.$,
-        "autorouteTraceWidth",
-        viewSetting.arTraceWidth
-      );
-      setOptionalValue(
-        moduleView.$,
-        "autorouteViaRingThickness",
-        viewSetting.arRingWidth
-      );
-      setOptionalValue(moduleView.$, "DRC_Keepout", viewSetting.keepoutDRC);
-      setOptionalValue(moduleView.$, "GPG_Keepout", viewSetting.keepoutGPG);
-    }
-    moduleViews.push(moduleView);
-  }
-
-  var moduleInstances = module.instances.instance;
-  var instances = this.instances;
-  for (i = 0; i < instances.length; i++) {
-    var instance = instances[i];
-    var moduleInstance = {
-      $: {
-        moduleIdRef: instance.moduleIdRef,
-        modelIndex: instance.modelIndex,
-        path: instance.path,
-        flippedSMD: instance.flippedSMD
-      },
-      views: {}
-    };
-    setOptionalValue(moduleInstance, "title", instance.title);
-    setOptionalValue(moduleInstance, "text", instance.text);
-
-    if (instance.properties.length > 0) {
-      var properties = instance.properties;
-      moduleInstance.properties = {
-        property: []
-      };
-      var moduleProperties = moduleInstance.properties.property;
-      for (j = 0; j < properties.length; j++) {
-        var property = properties[j];
-        var moduleProperty = {
+    if (this.boards.length > 0) {
+      moduleObj.boards = { board: [] };
+      for (const boardItem of this.boards) {
+        moduleObj.boards.board.push({
           $: {
-            name: property.name
-          }
-        };
-        setOptionalValue(moduleProperty, "value", property.value);
-        moduleProperties.push(moduleProperty);
-      }
-    }
-
-    var moduleViews1 = moduleInstance.views;
-    viewSettings1 = instance.viewSettings;
-    for (j = 0; j < viewSettings1.length; j++) {
-      viewSetting = viewSettings1[j];
-      moduleView = {
-        $: {
-          layer: viewSetting.layer,
-          locked: viewSetting.locked,
-          bottom: viewSetting.bottom
-        }
-      };
-
-      if (viewSetting.layerHidden) {
-        moduleView.layerHidden = {
-          $: {
-            layer: viewSetting.layerHidden
-          }
-        };
-      }
-
-      if (viewSetting.titleGeometry) {
-        var titleGeometry = viewSetting.titleGeometry;
-        var moduleTitleGeometry = {
-          $: {
-            visible: titleGeometry.visible,
-            x: titleGeometry.x,
-            y: titleGeometry.y,
-            z: titleGeometry.z,
-            xOffset: titleGeometry.xOffset,
-            yOffset: titleGeometry.yOffset,
-            textColor: titleGeometry.textColor,
-            fontSize: titleGeometry.fontSize
-          }
-        };
-        if (titleGeometry.visibleProperties.length > 0) {
-          var visibleProperties = titleGeometry.visibleProperties;
-          moduleTitleGeometry.displayKey = [];
-          var moduleDisplayKeys = moduleTitleGeometry.displayKey;
-          for (c = 0; c < visibleProperties.length; c++) {
-            moduleDisplayKeys.push({
-              _: visibleProperties[c]
-            });
-          }
-        }
-      }
-
-      if (viewSetting.connectors.length > 0) {
-        var connectors = viewSetting.connectors;
-        moduleView.connectors = {
-          connector: []
-        };
-        var moduleConnectors = moduleView.connectors.connector;
-        for (c = 0; c < connectors.length; c++) {
-          var connector = connectors[c];
-          geometry = connector.geometry;
-          var moduleConnector = {
-            $: {
-              connectorId: connector.id,
-              layer: connector.layer
-            },
-            geometry: {
-              $: {
-                x: geometry.x,
-                y: geometry.y
-              }
-            },
-            connects: {
-              connect: []
-            }
-          };
-
-          if (connector.leg.length > 0) {
-            var leg = connector.leg;
-            moduleConnector.leg = {
-              point: [],
-              bezier: []
-            };
-            var moduleLeg = moduleConnector.leg;
-            var modulePoints = moduleLeg.point;
-            var moduleBeziers = moduleLeg.bezier;
-            for (d = 0; d < leg.length; d++) {
-              var pair = leg[d];
-              var point = pair.point;
-              bezier = pair.bezier;
-              modulePoints.push({
-                $: {
-                  x: point.x,
-                  y: point.y
-                }
-              });
-              if (bezier) {
-                cp0 = bezier.cp0;
-                cp1 = bezier.cp1;
-                moduleBeziers.push({
-                  cp0: {
-                    $: {
-                      x: cp0.x,
-                      y: cp0.y
-                    }
-                  },
-                  cp1: {
-                    $: {
-                      x: cp1.x,
-                      y: cp1.y
-                    }
-                  }
-                });
-              } else {
-                moduleBeziers.push("");
-              }
-            }
-          }
-
-          var moduleConnects = moduleConnector.connects.connect;
-          var connectsTo = connector.connectsTo;
-          for (d = 0; d < connectsTo.length; d++) {
-            var connectTo = connectsTo[d];
-            moduleConnects.push({
-              $: {
-                connectorId: connectTo.id,
-                modelIndex: connectTo.modelIndex,
-                layer: connectTo.layer
-              }
-            });
-          }
-
-          moduleConnectors.push(moduleConnector);
-        }
-      }
-
-      geometry = viewSetting.geometry;
-      if (viewSetting instanceof WireInstanceViewSettings) {
-        moduleView.geometry = {
-          $: {
-            x: geometry.x,
-            y: geometry.y,
-            z: geometry.z,
-            x1: geometry.x1,
-            y1: geometry.y1,
-            x2: geometry.x2,
-            y2: geometry.y2,
-            wireFlags: geometry.wireFlags
-          }
-        };
-        var wireExtras = viewSetting.wireExtras;
-        moduleView.wireExtras = {
-          $: {
-            mils: wireExtras.mils,
-            color: wireExtras.color,
-            opacity: wireExtras.opacity,
-            banded: wireExtras.banded ? 1 : 0
-          }
-        };
-        if (wireExtras.bezier) {
-          bezier = wireExtras.bezier;
-          cp0 = bezier.cp0;
-          cp1 = bezier.cp1;
-          moduleView.wireExtras.bezier = {
-            cp0: {
-              $: {
-                x: cp0.x,
-                y: cp0.y
-              }
-            },
-            cp1: {
-              $: {
-                x: cp1.x,
-                y: cp1.y
-              }
-            }
-          };
-        }
-      } else {
-        moduleView.geometry = {
-          $: {
-            x: geometry.x,
-            y: geometry.y,
-            z: geometry.z
-          }
-        };
-        if (geometry.transform) {
-          var transform = geometry.transform;
-          moduleView.geometry.transform = {
-            $: {
-              m11: transform.m11,
-              m12: transform.m12,
-              m13: transform.m13,
-              m21: transform.m21,
-              m22: transform.m22,
-              m23: transform.m23,
-              m31: transform.m31,
-              m32: transform.m32,
-              m33: transform.m33
-            }
-          };
-        }
-      }
-      moduleViews1[viewSetting.name + "View"] = moduleView;
-    }
-
-    if (instance.localConnectors.length > 0) {
-      var localConnectors = instance.localConnectors;
-      moduleInstance.localConnectors = {
-        localConnector: []
-      };
-      var moduleLocalConnectors = moduleInstance.localConnectors.localConnector;
-      for (j = 0; j < localConnectors.length; j++) {
-        var localConnector = localConnectors[j];
-        moduleLocalConnectors.push({
-          $: {
-            id: localConnector.id,
-            name: localConnector.name
-          }
+            height: boardItem.height,
+            instance: boardItem.instance,
+            moduleId: boardItem.moduleId,
+            title: boardItem.title,
+            width: boardItem.width,
+          },
         });
       }
     }
 
-    moduleInstances.push(moduleInstance);
-  }
-  return new xml2js.Builder().buildObject({
-    module: module
-  });
-};
+    if (this.programs.length > 0) {
+      moduleObj.programs = { $: { pid: this.programs[0].pid }, program: [] };
+      for (const programItem of this.programs) {
+        moduleObj.programs.program.push({
+          $: {
+            language: programItem.language,
+            programmer: programItem.author,
+          },
+          _: programItem.path,
+        });
+      }
+    }
 
-/**
- * @static
- * Returns the given Sketch as a string of FZ XML
- * @param {Sketch} sketch The given Sketch
- * @return {string} The given Sketch as a string of FZ XML
- */
-Sketch.toFZ = function(sketch) {
-  return sketch.toFZ();
-};
+    for (const viewSettingItem of this.viewSettings) {
+      const moduleView: any = {
+        $: {
+          alignToGrid: viewSettingItem.alignToGrid ? 1 : 0,
+          name: viewSettingItem.name + "View",
+          showGrid: viewSettingItem.showGrid ? 1 : 0,
+          viewFromBelow: viewSettingItem.viewFromBelow ? 1 : 0,
+        },
+      };
+      ObjectUtilities.setOptionalValue(moduleView.$, "backgroundColor", viewSettingItem.backgroundColor);
+      ObjectUtilities.setOptionalValue(moduleView.$, "gridSize", viewSettingItem.gridSize);
+      if (viewSettingItem instanceof SketchPCBViewSettings) {
+        ObjectUtilities.setOptionalValue(moduleView.$, "autorouteViaHoleSize", viewSettingItem.arHoleSize);
+        ObjectUtilities.setOptionalValue(moduleView.$, "autorouteTraceWidth", viewSettingItem.arTraceWidth);
+        ObjectUtilities.setOptionalValue(moduleView.$, "autorouteViaRingThickness", viewSettingItem.arRingWidth);
+      }
+      moduleObj.views.view.push(moduleView);
+    }
+
+    for (const instanceItem of this.instances) {
+      const moduleInstance: any = {
+        $: {
+          flippedSMD: instanceItem.flippedSMD,
+          modelIndex: instanceItem.modelIndex,
+          moduleIdRef: instanceItem.moduleIdRef,
+          path: instanceItem.path,
+        },
+        views: {},
+      };
+      ObjectUtilities.setOptionalValue(moduleInstance, "title", instanceItem.title);
+      ObjectUtilities.setOptionalValue(moduleInstance, "text", instanceItem.text);
+      if (instanceItem.properties.length > 0) {
+        moduleInstance.properties = { property: [] };
+        for (const propertyItem of instanceItem.properties) {
+          const moduleProperty = { $: { name: propertyItem.name }};
+          ObjectUtilities.setOptionalValue(moduleProperty, "value", propertyItem.value);
+          moduleInstance.properties.property.push(moduleProperty);
+        }
+      }
+
+      for (const viewSettingsItem of instanceItem.viewSettings) {
+        const moduleView: any = {
+          $: {
+            bottom: viewSettingsItem.bottom,
+            layer: viewSettingsItem.layer,
+            locked: viewSettingsItem.locked,
+          },
+        };
+        if (viewSettingsItem.layerHidden) {
+          moduleView.layerHidden = { $: { layer: viewSettingsItem.layerHidden }};
+        }
+        if (viewSettingsItem.titleGeometry) {
+          const titleGeometry = viewSettingsItem.titleGeometry;
+          const moduleTitleGeometry: any = {
+            $: {
+              fontSize: titleGeometry.fontSize,
+              textColor: titleGeometry.textColor,
+              visible: titleGeometry.visible,
+              x: titleGeometry.x,
+              xOffset: titleGeometry.offsetX,
+              y: titleGeometry.y,
+              yOffset: titleGeometry.offsetY,
+              z: titleGeometry.z,
+            },
+          };
+          if (titleGeometry.visibleProperties.length > 0) {
+            moduleTitleGeometry.displayKey = [];
+            for (const visiblePropertyItem of titleGeometry.visibleProperties) {
+              moduleTitleGeometry.displayKey.push({ _: visiblePropertyItem});
+            }
+          }
+        }
+
+        if (viewSettingsItem.connectors.length > 0) {
+          moduleView.connectors = { connector: [] };
+          for (const connectorItem of viewSettingsItem.connectors) {
+            const moduleConnector: any = {
+              $: {
+                connectorId: connectorItem.id,
+                layer: connectorItem.layer,
+              },
+              geometry: {
+                $: { x: connectorItem.geometry.x, y: connectorItem.geometry.y },
+                connects: { connect: [] },
+              },
+            };
+            if (connectorItem.leg.length > 0) {
+              moduleConnector.leg = { point: [], bezier: [] };
+              const moduleLeg = moduleConnector.leg;
+              const modulePoints = moduleLeg.point;
+              const moduleBeziers = moduleLeg.bezier;
+              for (const legItemPair of connectorItem.leg) {
+                modulePoints.push({ $: { x: legItemPair.point.x, y: legItemPair.point.y }});
+                if (legItemPair.bezier) {
+                  moduleBeziers.push({
+                    cp0: {$: { x: legItemPair.bezier.cp0.x, y: legItemPair.bezier.cp0.y }},
+                    cp1: {$: { x: legItemPair.bezier.cp1.x, y: legItemPair.bezier.cp1.y }},
+                  });
+                } else {
+                  moduleBeziers.push("");
+                }
+              }
+            }
+
+            for (const connectToItem of connectorItem.connectsTo) {
+              moduleConnector.connects.connect.push({
+                $: {
+                  connectorId: connectToItem.id,
+                  layer: connectToItem.layer,
+                  modelIndex: connectToItem.modelIndex,
+                },
+              });
+            }
+            moduleView.connectors.connector.push(moduleConnector);
+          }
+        }
+
+        const geometry = viewSettingsItem.geometry;
+        // TODO: Check Instance Classes properties because WireInstanceViewSettings does not have those properties.
+        if (viewSettingsItem instanceof WireInstanceViewSettings) {
+          moduleView.geometry = {
+            $: {
+              wireFlags: geometry.wireFlags,
+              x: geometry.x,
+              x1: geometry.x1,
+              x2: geometry.x2,
+              y: geometry.y,
+              y1: geometry.y1,
+              y2: geometry.y2,
+              z: geometry.z,
+            },
+          };
+          const wireExtras = viewSettingsItem.wireExtras;
+          moduleView.wireExtras = {
+            $: {
+              banded: (wireExtras.banded) ? 1 : 0,
+              color: wireExtras.color,
+              mils: wireExtras.mils,
+              opacity: wireExtras.opacity,
+            },
+          };
+          if (wireExtras.bezier) {
+            moduleView.wireExtras.bezier = {
+              cp0: {$: { x: wireExtras.bezier.cp0.x, y: wireExtras.bezier.cp0.y }},
+              cp1: {$: { x: wireExtras.bezier.cp1.x, y: wireExtras.bezier.cp1.y }},
+            };
+          }
+        } else {
+          moduleView.geometry = {
+            $: {
+              x: geometry.x,
+              y: geometry.y,
+              z: geometry.z,
+            },
+          };
+          if (geometry.transform) {
+            moduleView.geometry.transform = {
+              $: {
+                m11: geometry.transform.m11,
+                m12: geometry.transform.m12,
+                m13: geometry.transform.m13,
+                m21: geometry.transform.m21,
+                m22: geometry.transform.m22,
+                m23: geometry.transform.m23,
+                m31: geometry.transform.m31,
+                m32: geometry.transform.m32,
+                m33: geometry.transform.m33,
+              },
+            };
+          }
+        }
+        moduleInstance.views[viewSettingsItem.name + "View"] = moduleView;
+      }
+
+      if (instanceItem.localConnectors.length > 0) {
+        moduleInstance.localConnectors = { localConnector: [] };
+        for (const localConnectorItem of instanceItem.localConnectors) {
+          moduleInstance.localConnectors.localConnector.push({
+            $: {
+              id: localConnectorItem.id,
+              name: localConnectorItem.name,
+            },
+          });
+        }
+      }
+      moduleObj.instances.instance.push(moduleInstance);
+    }
+    return new xml2js.Builder().buildObject(({
+      module: moduleObj,
+    }));
+  }
+}
 
 /**
  * @static
@@ -1930,26 +1790,4 @@ Sketch.fromFZ = function(fz) {
       }
     );
   });
-};
-
-module.exports = {
-  Bezier: Bezier,
-  PointBezierPair: PointBezierPair,
-  Geometry: Geometry,
-  Transform: Transform,
-  TransformGeometry: TransformGeometry,
-  WireGeometry: WireGeometry,
-  TitleGeometry: TitleGeometry,
-  InstanceConnectorReference: InstanceConnectorReference,
-  InstanceConnector: InstanceConnector,
-  InstanceViewSettings: InstanceViewSettings,
-  WireExtras: WireExtras,
-  WireInstanceViewSettings: WireInstanceViewSettings,
-  LocalConnector: LocalConnector,
-  Instance: Instance,
-  Program: Program,
-  Board: Board,
-  SketchViewSettings: SketchViewSettings,
-  SketchPCBViewSettings: SketchPCBViewSettings,
-  Sketch: Sketch
 };

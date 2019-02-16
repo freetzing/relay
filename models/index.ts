@@ -1,2 +1,2 @@
-export * from './sketch.model';
-export * from './global.model';
+export * from "./sketch.model";
+export * from "./global.model";

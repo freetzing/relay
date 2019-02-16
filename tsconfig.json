@@ -12,7 +12,8 @@
                 "suppressWhileTypeErrorsPresent": false,
                 "mockTypeScriptVersion": false
             }
-        ]
+        ],
+        "types": ["node"]
     },
     "include": [
         "./lib/**/*"
