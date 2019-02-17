@@ -1186,7 +1186,7 @@ export class Sketch {
    */
   public toFZ(): string {
 
-    const moduleObj: any = {
+    const moduleObj: {[k: string]: any} = {
       $: { fritzingVersion: this.fritzingVersion },
       instances: { instance: [] },
       views: { view: [] },
@@ -1221,7 +1221,7 @@ export class Sketch {
     }
 
     for (const viewSettingItem of this.viewSettings) {
-      const moduleView: any = {
+      const moduleView: {[k: string]: any} = {
         $: {
           alignToGrid: viewSettingItem.alignToGrid ? 1 : 0,
           name: viewSettingItem.name + "View",
@@ -1240,7 +1240,7 @@ export class Sketch {
     }
 
     for (const instanceItem of this.instances) {
-      const moduleInstance: any = {
+      const moduleInstance: {[k: string]: any} = {
         $: {
           flippedSMD: instanceItem.flippedSMD,
           modelIndex: instanceItem.modelIndex,
@@ -1261,7 +1261,7 @@ export class Sketch {
       }
 
       for (const viewSettingsItem of instanceItem.viewSettings) {
-        const moduleView: any = {
+        const moduleView: {[k: string]: any} = {
           $: {
             bottom: viewSettingsItem.bottom,
             layer: viewSettingsItem.layer,
@@ -1273,7 +1273,7 @@ export class Sketch {
         }
         if (viewSettingsItem.titleGeometry) {
           const titleGeometry = viewSettingsItem.titleGeometry;
-          const moduleTitleGeometry: any = {
+          const moduleTitleGeometry: {[k: string]: any} = {
             $: {
               fontSize: titleGeometry.fontSize,
               textColor: titleGeometry.textColor,
@@ -1296,7 +1296,7 @@ export class Sketch {
         if (viewSettingsItem.connectors.length > 0) {
           moduleView.connectors = { connector: [] };
           for (const connectorItem of viewSettingsItem.connectors) {
-            const moduleConnector: any = {
+            const moduleConnector: {[k: string]: any} = {
               $: {
                 connectorId: connectorItem.id,
                 layer: connectorItem.layer,
@@ -1411,383 +1411,311 @@ export class Sketch {
       module: moduleObj,
     }));
   }
-}
 
-/**
- * @static
- * Returns a Promise that resolves with a {@link Sketch} object converted from the given FZ XML
- * @param {string} fz A string of FZ XML
- * @return {Promise} A Promise that resolves with a {@link Sketch} object converted from the given FZ XML
- */
-Sketch.fromFZ = function(fz) {
-  function getOptionalValue(object) {
+  /**
+   * @static
+   * Returns a Promise that resolves with a {@link Sketch} object converted from the given FZ XML
+   * @param {string} fz A string of FZ XML
+   * @return {Promise} A Promise that resolves with a {@link Sketch} object converted from the given FZ XML
+   */
+  public fromFZ(fz: string): Promise<Sketch> {
+    return new Promise((resolve, reject) => {
+      xml2js.parseString(fz, { explicitCharkey: true }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(this.ParseStringData(data));
+        }
+      });
+    });
+  }
+
+  private getOptionalValue(object: any): any {
     if (object) {
       return object[0]._;
     }
     return undefined;
   }
 
-  function getOptionalAttribute(object, attribute) {
+  private getOptionalAttribute(object: any, attribute: string): any {
     if (object && object.$) {
       return object.$[attribute];
     }
     return undefined;
   }
 
-  return new Promise(function(resolve, reject) {
-    xml2js.parseString(
-      fz,
-      {
-        explicitCharkey: true
-      },
-      function(err, data) {
-        var i;
-        var j;
-        var c;
-        var d;
-        var moduleView;
-        var moduleGeometry;
-        var moduleBezier;
-        var moduleCP0;
-        var moduleCP1;
+  private ParseStringData(data: any): Sketch {
+    const moduleObj = data.module;
+    const boardsData: Board[] = [];
+    if (moduleObj.boards && moduleObj.boards[0].board) {
+      const moduleObjBoards = moduleObj.boards[0].board;
+      for (const moduleObjBoardItem of moduleObjBoards) {
+        boardsData.push(
+          new Board({
+            height: moduleObjBoardItem.$.height,
+            instance: moduleObjBoardItem.$.instance,
+            moduleId: moduleObjBoardItem.$.moduleId,
+            title: moduleObjBoardItem.$.title,
+            width: moduleObjBoardItem.$.width,
+          }),
+        );
+      }
+    }
 
-        if (err) {
-          reject(err);
+    const programsData: Program[] = [];
+    if (moduleObj.programs && moduleObj.programs[0].program) {
+      const moduleObjPrograms = moduleObj.programs[0].program;
+      for (const moduleObjProgramItem of moduleObjPrograms) {
+        programsData.push(
+          new Program({
+            author: moduleObjProgramItem.$.programmer,
+            language: moduleObjProgramItem.$.language,
+            path: moduleObjProgramItem._,
+            pid: moduleObjPrograms.programs[0].$.pid,
+          }),
+        );
+      }
+    }
+
+    const viewSettingsData: any[] = [];
+    const moduleObjViews = moduleObj.views[0].view;
+    for (const moduleObjViewItem of moduleObjViews) {
+      const viewName = moduleObjViewItem.$.name.slice(0, -4);
+      const viewSettingsParams: {[k: string]: any} = {
+        alignToGrid: this.getOptionalAttribute(moduleObjViewItem, "alignToGrid") === "1",
+        backgroundColor: this.getOptionalAttribute(moduleObjViewItem, "backgroundColor"),
+        gridSize: this.getOptionalAttribute(moduleObjViewItem, "gridSize"),
+        name: viewName,
+        showGrid: this.getOptionalAttribute(moduleObjViewItem, "showGrid") === "1",
+        viewFromBelow: this.getOptionalAttribute(moduleObjViewItem, "viewFromBelow") === "1",
+      };
+      if (viewName === "pcb") {
+        viewSettingsParams.arHoleSize = this.getOptionalAttribute(moduleObjViewItem, "autorouteViaHoleSize");
+        viewSettingsParams.arTraceWidth = this.getOptionalAttribute(moduleObjViewItem, "autorouteTraceWidth");
+        viewSettingsParams.arRingWidth = this.getOptionalAttribute(moduleObjViewItem, "autorouteViaRingThickness");
+        viewSettingsParams.keepoutDRC = this.getOptionalAttribute(moduleObjViewItem, "DRC_Keepout");
+        viewSettingsParams.keepoutGPG = this.getOptionalAttribute(moduleObjViewItem, "GPG_Keepout");
+        viewSettingsData.push(new SketchPCBViewSettings(viewSettingsParams as SketchPCBViewSettings));
+      } else {
+        viewSettingsData.push(new SketchViewSettings(viewSettingsParams as SketchViewSettings));
+      }
+    }
+
+    const instancesData: Instance[] = [];
+    const moduleObjInstances = moduleObj.instances[0].instance;
+    for (const moduleObjInstanceItem of moduleObjInstances) {
+      const propertiesData: Property[] = [];
+      if (moduleObjInstanceItem.properties && moduleObjInstanceItem.properties[0].property) {
+        for (const propertyItem of moduleObjInstanceItem.properties[0].property) {
+          propertiesData.push(new Property({
+            name: propertyItem.$.name,
+            value: propertyItem.$.value,
+          }));
+        }
+      }
+
+      const subViewSettings: any[] = [];
+      for (const viewKey of Object.keys(moduleObjInstanceItem.views[0])) {
+        const moduleView = moduleObjInstanceItem.views[0][viewKey][0];
+        let titleGeometryData: TitleGeometry = new TitleGeometry(null);
+        if (moduleView.titleGeometry) {
+          const visiblePropertiesData: string[] = [];
+          const moduleTitleGeometry = moduleView.titleGeometry[0];
+          if (moduleTitleGeometry.displayKey) {
+            for (const displayKey of moduleTitleGeometry.displayKey) {
+              visiblePropertiesData.push(displayKey.$.key);
+            }
+          }
+          titleGeometryData = new TitleGeometry({
+            fontSize: moduleTitleGeometry.$.fontSize,
+            offsetX: moduleTitleGeometry.$.xOffset,
+            offsetY: moduleTitleGeometry.$.yOffset,
+            textColor: moduleTitleGeometry.$.textColor,
+            visible: moduleTitleGeometry.$.visible === "true",
+            visibleProperties: visiblePropertiesData,
+            x: moduleTitleGeometry.$.x,
+            y: moduleTitleGeometry.$.y,
+            z: moduleTitleGeometry.$.z,
+          } as TitleGeometry);
+        }
+
+        let layerHiddenData = null;
+        if (moduleView.layerHidden) {
+          layerHiddenData = moduleView.layerHidden[0].$.layer;
+        }
+
+        const connectorsData: InstanceConnector[] = [];
+        if (moduleView.connectors && moduleView.connectors[0].connector) {
+          for (const connectorItem of moduleView.connectors[0].connector) {
+            const legData: PointBezierPair[] = [];
+            if (connectorItem.leg) {
+              const moduleLeg = connectorItem.leg[0];
+              for (let d = 0; d < moduleLeg.point.length; d++) {
+                if (moduleLeg.bezier[d] !== "") {
+                  const moduleBezier = moduleLeg.bezier[d];
+                  const moduleCP0 = moduleBezier.cp0[0];
+                  const moduleCP1 = moduleBezier.cp1[0];
+                  legData.push(new PointBezierPair({
+                      bezier: new Bezier({
+                        cp0: new Point({ x: moduleCP0.$.x, y: moduleCP0.$.y }),
+                        cp1: new Point({ x: moduleCP1.$.x, y: moduleCP1.$.y }),
+                      }),
+                      point: new Point({x: moduleLeg.point[d].$.x, y: moduleLeg.point[d].$.y}),
+                    }),
+                  );
+                } else {
+                  // TODO: Check what happens for this condition for the bezier property.
+                  legData.push(new PointBezierPair({
+                      bezier: new Bezier(null),
+                      point: new Point({x: moduleLeg.point[d].$.x, y: moduleLeg.point[d].$.y}),
+                    }),
+                  );
+                }
+              }
+            }
+
+            const connectsToData: InstanceConnectorReference[] = [];
+            if (connectorItem.connects && connectorItem.connects[0].connect) {
+              for (const moduleConnect of connectorItem.connects[0].connect) {
+                connectsToData.push(new InstanceConnectorReference({
+                  id: moduleConnect.$.connectorId,
+                  layer: moduleConnect.$.layer,
+                  modelIndex: moduleConnect.$.modelIndex,
+                }));
+              }
+            }
+
+            const connectorGeometry = connectorItem.geometry[0];
+            connectorsData.push(new InstanceConnector({
+                connectsTo: connectsToData,
+                geometry: new Geometry({ x: connectorGeometry.$.x, y: connectorGeometry.$.y, z: null}),
+                id: connectorItem.$.connectorId,
+                layer: connectorItem.$.layer,
+                leg: legData,
+            } as InstanceConnector));
+          }
+        }
+
+        let geometryData = null;
+        const moduleGeometry = moduleView.geometry[0];
+        if (moduleView.wireExtras) {
+          geometryData = new WireGeometry({
+            wireFlags: moduleGeometry.$.wireFlags,
+            x: moduleGeometry.$.x,
+            x1: moduleGeometry.$.x1,
+            x2: moduleGeometry.$.x2,
+            y: moduleGeometry.$.y,
+            y1: moduleGeometry.$.y1,
+            y2: moduleGeometry.$.y2,
+            z: moduleGeometry.$.z,
+          });
+
+          const moduleWireExtras = moduleView.wireExtras[0];
+          let wireBezier: Bezier = new Bezier(null);
+          if (moduleWireExtras.bezier) {
+            wireBezier = new Bezier({
+              cp0: new Point({
+                x: moduleWireExtras.bezier[0].cp0[0].$.x,
+                y: moduleWireExtras.bezier[0].cp0[0].$.y,
+              }),
+              cp1: new Point({
+                x: moduleWireExtras.bezier[0].cp1[0].$.x,
+                y: moduleWireExtras.bezier[0].cp1[0].$.y,
+              }),
+            });
+          }
+
+          const wireExtrasData: WireExtras = new WireExtras({
+            banded: moduleWireExtras.$.banded === "1",
+            bezier: wireBezier,
+            color: moduleWireExtras.$.color,
+            mils: moduleWireExtras.$.mils,
+            opacity: moduleWireExtras.$.opacity,
+          });
+
+          subViewSettings.push(new WireInstanceViewSettings({
+              bottom: moduleView.$.bottom === "true",
+              connectors: connectorsData,
+              geometry: geometryData,
+              layer: moduleView.$.layer,
+              layerHidden: layerHiddenData,
+              locked: this.getOptionalAttribute(moduleView, "locked") === "true",
+              name: viewKey.slice(0, -4),
+              titleGeometry: titleGeometryData,
+              wireExtras: wireExtrasData,
+            } as WireInstanceViewSettings));
         } else {
-          var module = data.module;
-
-          var boards = [];
-          if (module.boards && module.boards[0].board) {
-            var moduleBoards = module.boards[0].board;
-            for (i = 0; i < moduleBoards.length; i++) {
-              var moduleBoard = moduleBoards[i];
-              boards.push(
-                new Board({
-                  moduleId: moduleBoard.$.moduleId,
-                  title: moduleBoard.$.title,
-                  instance: moduleBoard.$.instance,
-                  width: moduleBoard.$.width,
-                  height: moduleBoard.$.height
-                })
-              );
-            }
+          let transformData: Transform = null;
+          if (moduleGeometry.transform) {
+            const moduleTransform = moduleGeometry.transform[0];
+            transformData = new Transform({
+              m11: moduleTransform.$.m11,
+              m12: moduleTransform.$.m12,
+              m13: moduleTransform.$.m13,
+              m21: moduleTransform.$.m21,
+              m22: moduleTransform.$.m22,
+              m23: moduleTransform.$.m23,
+              m31: moduleTransform.$.m31,
+              m32: moduleTransform.$.m32,
+              m33: moduleTransform.$.m33,
+            });
           }
 
-          var programs = [];
-          if (module.programs && module.programs[0].program) {
-            var modulePrograms = module.programs[0].program;
-            var pid = module.programs[0].$.pid;
-            for (i = 0; i < modulePrograms.length; i++) {
-              var moduleProgram = modulePrograms[i];
-              programs.push(
-                new Program(
-                  pid,
-                  moduleProgram.$.language,
-                  moduleProgram.$.programmer,
-                  moduleProgram._
-                )
-              );
-            }
-          }
+          geometryData = new TransformGeometry({
+            transform: transformData,
+            x: moduleGeometry.$.x,
+            y: moduleGeometry.$.y,
+            z: moduleGeometry.$.z,
+          });
 
-          var viewSettings = [];
-          var moduleViews = module.views[0].view;
-          for (i = 0; i < moduleViews.length; i++) {
-            moduleView = moduleViews[i];
-            var viewName = moduleView.$.name.slice(0, -4);
-            var viewSettingsParams = {
-              name: viewName,
-              backgroundColor: getOptionalAttribute(
-                moduleView,
-                "backgroundColor"
-              ),
-              gridSize: getOptionalAttribute(moduleView, "gridSize"),
-              showGrid: getOptionalAttribute(moduleView, "showGrid") === "1",
-              alignToGrid:
-                getOptionalAttribute(moduleView, "alignToGrid") === "1",
-              viewFromBelow:
-                getOptionalAttribute(moduleView, "viewFromBelow") === "1"
-            };
-
-            if (viewName === "pcb") {
-              viewSettingsParams["arHoleSize"] = getOptionalAttribute(
-                moduleView,
-                "autorouteViaHoleSize"
-              );
-              viewSettingsParams["arTraceWidth"] = getOptionalAttribute(
-                moduleView,
-                "autorouteTraceWidth"
-              );
-              viewSettingsParams["arRingWidth"] = getOptionalAttribute(
-                moduleView,
-                "autorouteViaRingThickness"
-              );
-              viewSettingsParams["keepoutDRC"] = getOptionalAttribute(
-                moduleView,
-                "DRC_Keepout"
-              );
-              viewSettingsParams["keepoutGPG"] = getOptionalAttribute(
-                moduleView,
-                "GPG_Keepout"
-              );
-              viewSettings.push(new SketchPCBViewSettings(viewSettingsParams));
-            } else {
-              viewSettings.push(new SketchViewSettings(viewSettingsParams));
-            }
-          }
-
-          var instances = [];
-          var moduleInstances = module.instances[0].instance;
-          for (i = 0; i < moduleInstances.length; i++) {
-            var moduleInstance = moduleInstances[i];
-
-            var properties = [];
-            if (
-              moduleInstance.properties &&
-              moduleInstance.properties[0].property
-            ) {
-              var moduleProperties = moduleInstance.properties[0].property;
-              for (j = 0; j < moduleProperties.length; j++) {
-                var moduleProperty = moduleProperties[j];
-                properties.push(
-                  new Property(moduleProperty.$.name, moduleProperty.$.value)
-                );
-              }
-            }
-
-            var viewSettings1 = [];
-            var moduleViewKeys = Object.keys(moduleInstance.views[0]);
-            for (j = 0; j < moduleViewKeys.length; j++) {
-              var titleGeometry;
-              var moduleViewKey = moduleViewKeys[j];
-              moduleView = moduleInstance.views[0][moduleViewKey][0];
-              if (moduleView.titleGeometry) {
-                var visibleProperties = [];
-                var moduleTitleGeometry = moduleView.titleGeometry[0];
-                if (moduleTitleGeometry.displayKey) {
-                  var moduleDisplayKeys = moduleTitleGeometry.displayKey;
-                  for (c = 0; c < moduleDisplayKeys.length; c++) {
-                    visibleProperties.push(moduleDisplayKeys[c].$.key);
-                  }
-                }
-                titleGeometry = new TitleGeometry({
-                  x: moduleTitleGeometry.$.x,
-                  y: moduleTitleGeometry.$.y,
-                  z: moduleTitleGeometry.$.z,
-                  visible: moduleTitleGeometry.$.visible === "true",
-                  offsetX: moduleTitleGeometry.$.xOffset,
-                  offsetY: moduleTitleGeometry.$.yOffset,
-                  textColor: moduleTitleGeometry.$.textColor,
-                  fontSize: moduleTitleGeometry.$.fontSize,
-                  visibleProperties: visibleProperties
-                });
-              }
-
-              var layerHidden;
-              if (moduleView.layerHidden) {
-                layerHidden = moduleView.layerHidden[0].$.layer;
-              }
-
-              var connectors = [];
-              if (moduleView.connectors && moduleView.connectors[0].connector) {
-                var moduleConnectors = moduleView.connectors[0].connector;
-                for (c = 0; c < moduleConnectors.length; c++) {
-                  var moduleConnector = moduleConnectors[c];
-
-                  var leg = [];
-                  if (moduleConnector.leg) {
-                    var moduleLeg = moduleConnector.leg[0];
-                    for (d = 0; d < moduleLeg.point.length; d++) {
-                      var modulePoint = moduleLeg.point[d];
-                      if (moduleLeg.bezier[d] !== "") {
-                        moduleBezier = moduleLeg.bezier[d];
-                        moduleCP0 = moduleBezier.cp0[0];
-                        moduleCP1 = moduleBezier.cp1[0];
-                        leg.push(
-                          new PointBezierPair(
-                            new Point(modulePoint.$.x, modulePoint.$.y),
-                            new Bezier(
-                              new Point(moduleCP0.$.x, moduleCP0.$.y),
-                              new Point(moduleCP1.$.x, moduleCP1.$.y)
-                            )
-                          )
-                        );
-                      } else {
-                        leg.push(
-                          new PointBezierPair(
-                            new Point(modulePoint.$.x, modulePoint.$.y)
-                          )
-                        );
-                      }
-                    }
-                  }
-
-                  var connectsTo = [];
-                  if (
-                    moduleConnector.connects &&
-                    moduleConnector.connects[0].connect
-                  ) {
-                    var moduleConnects = moduleConnector.connects[0].connect;
-                    for (d = 0; d < moduleConnects.length; d++) {
-                      var moduleConnect = moduleConnects[d];
-                      connectsTo.push(
-                        new InstanceConnectorReference(
-                          moduleConnect.$.connectorId,
-                          moduleConnect.$.modelIndex,
-                          moduleConnect.$.layer
-                        )
-                      );
-                    }
-                  }
-
-                  moduleGeometry = moduleConnector.geometry[0];
-
-                  connectors.push(
-                    new InstanceConnector({
-                      id: moduleConnector.$.connectorId,
-                      layer: moduleConnector.$.layer,
-                      geometry: new Geometry(
-                        moduleGeometry.$.x,
-                        moduleGeometry.$.y
-                      ),
-                      leg: leg,
-                      connectsTo: connectsTo
-                    })
-                  );
-                }
-              }
-
-              var geometry;
-              moduleGeometry = moduleView.geometry[0];
-              var x = moduleGeometry.$.x;
-              var y = moduleGeometry.$.y;
-              var z = moduleGeometry.$.z;
-
-              if (moduleView.wireExtras) {
-                geometry = new WireGeometry({
-                  x: x,
-                  y: y,
-                  z: z,
-                  x1: moduleGeometry.$.x1,
-                  y1: moduleGeometry.$.y1,
-                  x2: moduleGeometry.$.x2,
-                  y2: moduleGeometry.$.y2,
-                  wireFlags: moduleGeometry.$.wireFlags
-                });
-
-                var moduleWireExtras = moduleView.wireExtras[0];
-                var bezier;
-                if (moduleWireExtras.bezier) {
-                  moduleBezier = moduleWireExtras.bezier[0];
-                  moduleCP0 = moduleBezier.cp0[0];
-                  moduleCP1 = moduleBezier.cp1[0];
-                  bezier = new Bezier(
-                    new Point(moduleCP0.$.x, moduleCP0.$.y),
-                    new Point(moduleCP1.$.x, moduleCP1.$.y)
-                  );
-                }
-
-                var wireExtras = new WireExtras({
-                  mils: moduleWireExtras.$.mils,
-                  color: moduleWireExtras.$.color,
-                  opacity: moduleWireExtras.$.opacity,
-                  banded: moduleWireExtras.$.banded === "1",
-                  bezier: bezier
-                });
-
-                viewSettings1.push(
-                  new WireInstanceViewSettings({
-                    name: moduleViewKey.slice(0, -4),
-                    layer: moduleView.$.layer,
-                    geometry: geometry,
-                    titleGeometry: titleGeometry,
-                    connectors: connectors,
-                    bottom: moduleView.$.bottom === "true",
-                    locked:
-                      getOptionalAttribute(moduleView, "locked") === "true",
-                    layerHidden: layerHidden,
-                    wireExtras: wireExtras
-                  })
-                );
-              } else {
-                var transform;
-                if (moduleGeometry.transform) {
-                  var moduleTransform = moduleGeometry.transform[0];
-                  transform = new Transform({
-                    m11: moduleTransform.$.m11,
-                    m12: moduleTransform.$.m12,
-                    m13: moduleTransform.$.m13,
-                    m21: moduleTransform.$.m21,
-                    m22: moduleTransform.$.m22,
-                    m23: moduleTransform.$.m23,
-                    m31: moduleTransform.$.m31,
-                    m32: moduleTransform.$.m32,
-                    m33: moduleTransform.$.m33
-                  });
-                }
-
-                geometry = new TransformGeometry(x, y, z, transform);
-
-                viewSettings1.push(
-                  new InstanceViewSettings({
-                    name: moduleViewKey.slice(0, -4),
-                    layer: moduleView.$.layer,
-                    geometry: geometry,
-                    titleGeometry: titleGeometry,
-                    connectors: connectors,
-                    bottom: moduleView.$.bottom === "true",
-                    locked:
-                      getOptionalAttribute(moduleView, "locked") === "true",
-                    layerHidden: layerHidden
-                  })
-                );
-              }
-            }
-
-            var localConnectors = [];
-            if (
-              moduleInstance.localConnectors &&
-              moduleInstance.localConnectors[0].localConnector
-            ) {
-              var moduleLocalConnectors =
-                moduleInstance.localConnectors[0].localConnector;
-              for (j = 0; j < moduleLocalConnectors.length; j++) {
-                var moduleLocalConnector = moduleLocalConnectors[j];
-                localConnectors.push(
-                  new LocalConnector(
-                    moduleLocalConnector.$.id,
-                    moduleLocalConnector.$.name
-                  )
-                );
-              }
-            }
-
-            instances.push(
-              new Instance({
-                moduleIdRef: moduleInstance.$.moduleIdRef,
-                modelIndex: moduleInstance.$.modelIndex,
-                path: moduleInstance.$.path,
-                properties: properties,
-                title: getOptionalValue(moduleInstance.title),
-                viewSettings: viewSettings1,
-                text: getOptionalValue(moduleInstance.text),
-                flippedSMD:
-                  getOptionalAttribute(moduleInstance, "flippedSMD") === "true",
-                localConnectors: localConnectors
-              })
-            );
-          }
-          return resolve(
-            new Sketch({
-              fritzingVersion: module.$.fritzingVersion,
-              programs: programs,
-              boards: boards,
-              viewSettings: viewSettings,
-              instances: instances
-            })
+          subViewSettings.push(
+            new InstanceViewSettings({
+              bottom: moduleView.$.bottom === "true",
+              connectors: connectorsData,
+              geometry: geometryData,
+              layer: moduleView.$.layer,
+              layerHidden: layerHiddenData,
+              locked: this.getOptionalAttribute(moduleView, "locked") === "true",
+              name: viewKey.slice(0, -4),
+              titleGeometry: titleGeometryData,
+            } as InstanceViewSettings),
           );
         }
       }
-    );
-  });
-};
+
+      const localConnectorsData: LocalConnector[] = [];
+      if (moduleObjInstanceItem.localConnectors && moduleObjInstanceItem.localConnectors[0].localConnector) {
+        for (const localConnectorItem of moduleObjInstanceItem.localConnectors[0].localConnector) {
+          localConnectorsData.push(
+            new LocalConnector({
+              id: localConnectorItem.$.id,
+              name: localConnectorItem.$.name,
+            }),
+          );
+        }
+      }
+
+      instancesData.push(
+        new Instance({
+          flippedSMD: this.getOptionalAttribute(moduleObjInstanceItem, "flippedSMD") === "true",
+          localConnectors: localConnectorsData,
+          modelIndex: moduleObjInstanceItem.$.modelIndex,
+          moduleIdRef: moduleObjInstanceItem.$.moduleIdRef,
+          path: moduleObjInstanceItem.$.path,
+          properties: propertiesData,
+          text: this.getOptionalValue(moduleObjInstanceItem.text),
+          title: this.getOptionalValue(moduleObjInstanceItem.title),
+          viewSettings: subViewSettings,
+        } as Instance),
+      );
+    }
+
+    return new Sketch({
+      boards: boardsData,
+      fritzingVersion: moduleObj.$.fritzingVersion,
+      instances: instancesData,
+      programs: programsData,
+      viewSettings: viewSettingsData,
+    } as Sketch);
+  }
+}
