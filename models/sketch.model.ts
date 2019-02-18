@@ -1,4 +1,25 @@
 import xml2js = require("xml2js");
+import {
+  IBezier,
+  IBoard,
+  IGeometry,
+  IInstance,
+  IInstanceConnector,
+  IInstanceConnectorReference,
+  IInstanceViewSettings,
+  ILocalConnector,
+  IPointBezierPair,
+  IProgram,
+  ISketch,
+  ISketchPCBViewSettings,
+  ISketchViewSettings,
+  ITitleGeometry,
+  ITransform,
+  ITransformGeometry,
+  IWireExtras,
+  IWireGeometry,
+  IWireInstanceViewSettings,
+} from "../interfaces/sketch.interface";
 import { ObjectUtilities } from "../utils/object.utils";
 import { Point, Property } from "./global.model";
 
@@ -7,7 +28,7 @@ import { Point, Property } from "./global.model";
  * @param {Point} cp0 The first control point of the Bezier curve
  * @param {Point} cp1 The second control point of the Bezier curve
  */
-export class Bezier {
+export class Bezier implements IBezier {
   public cp0: Point;
   public cp1: Point;
 
@@ -22,7 +43,7 @@ export class Bezier {
  * @param {Point} point The {@link Point} data
  * @param {Bezier} bezier The {@link Bezier} data
  */
-export class PointBezierPair {
+export class PointBezierPair implements IPointBezierPair {
   public point: Point;
   public bezier: Bezier;
 
@@ -39,7 +60,7 @@ export class PointBezierPair {
  * @param {number} z The z-coordinate of this Geometry, denoting whether an object in virtual space is above or below another.
  * Objects with a higher z value are rendered above
  */
-export class Geometry extends Point {
+export class Geometry extends Point implements IGeometry {
   public z: number;
 
   constructor(params: Geometry) {
@@ -62,7 +83,7 @@ export class Geometry extends Point {
  * @param {number} params.m32 The vertical translation factor
  * @param {number} params.m33 The division factor
  */
-export class Transform {
+export class Transform implements ITransform {
   public m11: number;
   public m12: number;
   public m13: number;
@@ -95,7 +116,7 @@ export class Transform {
  * See {@link Geometry} for the purpose of the z-coordinate in a two-dimensional, virtual space.
  * @param {Transform} transform The {@link Transform} matrix describing the object's transformation from its original state
  */
-export class TransformGeometry extends Geometry {
+export class TransformGeometry extends Geometry implements ITransformGeometry {
   public transform: Transform;
 
   constructor(params: TransformGeometry) {
@@ -128,7 +149,7 @@ export class TransformGeometry extends Geometry {
  *
  * https://github.com/fritzing/fritzing-app/blob/master/src/viewgeometry.h
  */
-export class WireGeometry extends Geometry {
+export class WireGeometry extends Geometry implements IWireGeometry {
   public x1: number;
   public x2: number;
   public y1: number;
@@ -161,7 +182,7 @@ export class WireGeometry extends Geometry {
  * @param {string[]} [params.visibleProperties = []] The keys of the {@link PartProperty}'s' to be forcibly displayed with the title.
  * If this array is left empty, those {@link PartProperty}'s with **showInLabel=true** will be displayed by default
  */
-export class TitleGeometry extends Geometry {
+export class TitleGeometry extends Geometry implements ITitleGeometry {
   public visible: boolean;
   public offsetX: number;
   public offsetY: number;
@@ -245,7 +266,7 @@ export class TitleGeometry extends Geometry {
  * @param {number} modelIndex The unique index of the {@link Instance} containing the referenced {@link InstanceConnector}
  * @param {string} layer The layer of the connection
  */
-export class InstanceConnectorReference {
+export class InstanceConnectorReference implements IInstanceConnectorReference {
   public id: string;
   public modelIndex: number;
   public layer: string;
@@ -267,7 +288,7 @@ export class InstanceConnectorReference {
  * represented by {@link PointBezierPair}s.
  * @param {InstanceConnectorReference[]} [params.connectsTo = []] The {@link InstanceConnectorReference}s that this Instance connects to
  */
-export class InstanceConnector {
+export class InstanceConnector implements IInstanceConnector {
   public id: string;
   public layer: string;
   public geometry: Geometry;
@@ -430,7 +451,7 @@ export class InstanceConnector {
  * @param {boolean} [params.layerHidden = false] Seem to hide the corresponding {@link Instance} for silkscreen layers in the PCB view.
  * Confirmation of this variable's purpose would be much appreciated.
  */
-export class InstanceViewSettings {
+export class InstanceViewSettings implements IInstanceViewSettings {
   public name: string;
   public layer: string;
   public geometry: Geometry;
@@ -535,7 +556,7 @@ export class InstanceViewSettings {
  * @param {Bezier} params.bezier Appears to be the Bezier curve used to describe the curvature of this wire {@link Instance} in breadboard view.
  * Confirmation of this variable's purpose would be much appreciated
  */
-export class WireExtras {
+export class WireExtras implements IWireExtras {
   public mils: number;
   public color: string;
   public opacity: number;
@@ -570,7 +591,7 @@ export class WireExtras {
  * Confirmation of this variable's purpose would be much appreciated
  * @param {WireExtras} params.wireExtras The additional settings for this wire {@link Instance}. See {@link WireExtras} for more
  */
-export class WireInstanceViewSettings extends InstanceViewSettings {
+export class WireInstanceViewSettings extends InstanceViewSettings implements IWireInstanceViewSettings {
   public wireExtras: WireExtras;
 
   constructor(params: WireInstanceViewSettings) {
@@ -585,7 +606,7 @@ export class WireInstanceViewSettings extends InstanceViewSettings {
  * @param {string} id The ID of this LocalConnector.
  * @param {string} name The name of this LocalConnector.
  */
-export class LocalConnector {
+export class LocalConnector implements ILocalConnector {
   public id: string;
   public name: string;
 
@@ -611,7 +632,7 @@ export class LocalConnector {
  * Confirmation of this variable's purpose would be much appreciated.
  * @param {LocalConnector[]} [params.localConnectors = []] The {@link LocalConnector}s of this Instance
  */
-export class Instance {
+export class Instance implements IInstance {
   public moduleIdRef: string;
   public modelIndex: string;
   public path: string;
@@ -785,7 +806,7 @@ export class Instance {
  * @param {string} author The author of this Program.
  * @param {string} path The path to this Program in the file system.
  */
-export class Program {
+export class Program implements IProgram {
   public pid: string;
   public language: string;
   public author: string;
@@ -808,7 +829,7 @@ export class Program {
  * @param {string} params.width The width of this Board in virtual space
  * @param {string} params.height The height of this Board in virtual space
  */
-export class Board {
+export class Board implements IBoard {
   public moduleId: string;
   public title: string;
   public instance: string;
@@ -836,7 +857,7 @@ export class Board {
  * @param {viewFromBelow} [params.viewFromBelow = false] Appears to decide whether a {@link Sketch} can be viewed from below.
  * Confirmation of this variable's purpose would be much appreciated.
  */
-export class SketchViewSettings {
+export class SketchViewSettings implements ISketchViewSettings {
   public name: string;
   public backgroundColor: string;
   public gridSize: string;
@@ -872,7 +893,7 @@ export class SketchViewSettings {
  * @param {string} params.keepoutDRC Beyond its association with autorouting, this variable's purpose is unknown.
  * @param {string} params.keepoutGPG Beyond its association with autorouting, this variable's purpose is unknown.
  */
-export class SketchPCBViewSettings extends SketchViewSettings {
+export class SketchPCBViewSettings extends SketchViewSettings implements ISketchPCBViewSettings {
   public arHoleSize: string;
   public arTraceWidth: string;
   public arRingWidth: string;
@@ -899,7 +920,7 @@ export class SketchPCBViewSettings extends SketchViewSettings {
  * @param {SketchViewSettings[]} params.viewSettings The {@link SketchViewSettings} of this Sketch
  * @param {Instance[]} params.instances The {@link Instance}s of this Sketch
  */
-export class Sketch {
+export class Sketch implements ISketch {
   /**
    * @static
    * Returns the given Sketch as a string of FZ XML
