@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./built",
+        "outDir": "build",
         "allowJs": true,
         "target": "es5",
         "plugins": [
@@ -15,6 +15,10 @@
         ],
         "types": ["node"]
     },
+    "exclude": [
+        "node_modules",
+        "build"
+    ],
     "include": [
         "./lib/**/*"
     ]
