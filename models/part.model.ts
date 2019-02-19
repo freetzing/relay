@@ -394,177 +394,185 @@ export class PartConnector {
 }
 
 /**
- * @constructor
- * @class
- * @classdesc An internal connection between {@link PartConnector}s
- * @param {string} id The ID of this Bus
- * @param {string[]} [connectorIds = []] The ID's of the {@link PartConnector}s connected by this Bus
+ * @classdesc An internal connection between {@link PartConnector}s.
+ * @param {string} id The ID of this Bus.
+ * @param {string[]} [connectorIds = []] The ID's of the {@link PartConnector}s connected by this Bus.
  */
-var Bus = function (id, connectorIds) {
-  this.id = id
-  this.connectorIds = connectorIds || []
-}
+export class Bus {
+  public id: string;
+  public connectorIds: string[];
 
-/**
- * Returns the connector ID at the given index
- * @param {number} index The index of the connector ID
- * @return {string} The connector ID at the given index
- */
-Bus.prototype.getConnectorIdAt = function (index) {
-  return this.connectorIds[index]
-}
+  constructor(params: Bus) {
+    this.id = params.id;
+    this.connectorIds = params.connectorIds || [];
+  }
 
-/**
- * Adds a connector ID to this Bus on the condition that it does not already exist
- * @param {string} connectorId The connector ID to be added
- */
-Bus.prototype.setConnectorId = function (connectorId) {
-  if (!this.hasConnectorId(connectorId)) this.connectorIds.push(connectorId)
-}
+  /**
+   * Returns the connector ID at the given index
+   * @param {number} index The index of the connector ID
+   * @return {string} The connector ID at the given index
+   */
+  public getConnectorIdAt(index: number): string {
+    return this.connectorIds[index];
+  }
 
-/**
- * Returns whether this Bus has the given connector ID
- * @param {string} connectorId The given connector ID to search for
- * @return {boolean} Whether this Bus has the given connector ID
- */
-Bus.prototype.hasConnectorId = function (connectorId) {
-  var has = false
-  for (var i = 0; i < this.connectorIds.length; i++) {
-    if (this.connectorIds[i] === connectorId) {
-      has = true
-      break
+  /**
+   * Adds a connector ID to this Bus on the condition that it does not already exist
+   * @param {string} connectorId The connector ID to be added
+   */
+  public setConnectorId(connectorId: string): void {
+    if (!this.hasConnectorId(connectorId)) {
+      this.connectorIds.push(connectorId);
     }
   }
-  return has
-}
 
-/**
- * Removes the given connector ID
- * @param {string} connectorId The connector ID to be removed
- * @return {boolean} Whether the given connector ID was removed
- */
-Bus.prototype.removeConnectorId = function (connectorId) {
-  var removed = false
-  for (var i = 0; i < this.connectorIds.length; i++) {
-    if (this.connectorIds[i] === connectorId) {
-      this.connectorIds.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Returns whether this Bus has the given connector ID
+   * @param {string} connectorId The given connector ID to search for
+   * @return {boolean} Whether this Bus has the given connector ID
+   */
+  public hasConnectorId(connectorId: string): boolean {
+    for (const connectorItem of this.connectorIds) {
+      if (connectorItem === connectorId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the given connector ID
+   * @param {string} connectorId The connector ID to be removed
+   * @return {boolean} Whether the given connector ID was removed
+   */
+  public removeConnectorId(connectorId: string): boolean {
+    for (const connectorItem of this.connectorIds) {
+      if (connectorItem === connectorId) {
+        this.connectorIds.splice(this.connectorIds.findIndex(x => x === connectorId), 1);
+        return true;
+      }
     }
   }
-  return removed
+
+  /**
+   * Removes the connector ID at the given index
+   * @param {number} index The index of the connector ID
+   * @return {boolean} Whether the connector ID at the given index was removed
+   */
+  public removeConnectorIdAt(index: number): boolean {
+    return this.connectorIds.splice(index, 1).length > 0;
+  }
 }
 
 /**
- * Removes the connector ID at the given index
- * @param {number} index The index of the connector ID
- * @return {boolean} Whether the connector ID at the given index was removed
+ * @classdesc A *spatial* subcomponent of a {@link Part} used to separate its distinct regions by {@link PartConnector}s.
+ * @param {string} id The ID of this Subpart.
+ * @param {string} label The label of this Subpart.
+ * @param {string[]} [connectorIds = []] The ID's of the {@link PartConnector}s incorporated into this Subpart.
  */
-Bus.prototype.removeConnectorIdAt = function (index) {
-  return this.connectorIds.splice(index, 1).length > 0
-}
+export class Subpart {
+  public id: string;
+  public label: string;
+  public connectorIds: string[];
 
-/**
- * @constructor
- * @class
- * @classdesc A *spatial* subcomponent of a {@link Part} used to separate its distinct regions by {@link PartConnector}s
- * @param {string} id The ID of this Subpart
- * @param {string} label The label of this Subpart
- * @param {string[]} [connectorIds = []] The ID's of the {@link PartConnector}s incorporated into this Subpart
- */
-var Subpart = function (id, label, connectorIds) {
-  this.id = id
-  this.label = label
-  this.connectorIds = connectorIds || []
-}
+  constructor(params: Subpart) {
+    this.id = params.id;
+    this.label = params.label;
+    this.connectorIds = params.connectorIds || [];
+  }
 
-/**
- * Returns the connector ID at the given index
- * @param {number} index The index of the connector ID
- * @return {string} The connector ID at the given index
- */
-Subpart.prototype.getConnectorIdAt = function (index) {
-  return this.connectorIds[index]
-}
+  /**
+   * Returns the connector ID at the given index.
+   * @param {number} index The index of the connector ID.
+   * @return {string} The connector ID at the given index.
+   */
+  public getConnectorIdAt(index: number): string {
+    return this.connectorIds[index];
+  }
 
-/**
- * Adds a connector ID to this Subpart on the condition that it does not already exist
- * @param {string} connectorId The connector ID to be added
- */
-Subpart.prototype.setConnectorId = function (connectorId) {
-  if (!this.hasConnectorId(connectorId)) this.connectorIds.push(connectorId)
-}
-
-/**
- * Returns whether this Subpart has the given connector ID
- * @param {string} connectorId The given connector ID to search for
- * @return {boolean} Whether this Subpart has the given connector ID
- */
-Subpart.prototype.hasConnectorId = function (connectorId) {
-  var has = false
-  for (var i = 0; i < this.connectorIds.length; i++) {
-    if (this.connectorIds[i] === connectorId) {
-      has = true
-      break
+  /**
+   * Adds a connector ID to this Subpart on the condition that it does not already exist.
+   * @param {string} connectorId The connector ID to be added.
+   */
+  public setConnectorId(connectorId: string): void {
+    if (!this.hasConnectorId(connectorId)) {
+      this.connectorIds.push(connectorId);
     }
   }
-  return has
-}
 
-/**
- * Removes the given connector ID
- * @param {string} connectorId The connector ID to be removed
- * @return {boolean} Whether the given connector ID was removed
- */
-Subpart.prototype.removeConnectorId = function (connectorId) {
-  var removed = false
-  for (var i = 0; i < this.connectorIds.length; i++) {
-    if (this.connectorIds[i] === connectorId) {
-      this.connectorIds.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Returns whether this Subpart has the given connector ID
+   * @param {string} connectorId The given connector ID to search for
+   * @return {boolean} Whether this Subpart has the given connector ID
+   */
+  public hasConnectorId(connectorId: string): boolean {
+    for (const connectorItem of this.connectorIds) {
+      if (connectorItem === connectorId) {
+        return true;
+      }
     }
+    return false;
   }
-  return removed
+
+  /**
+   * Removes the given connector ID.
+   * @param {string} connectorId The connector ID to be removed.
+   * @return {boolean} Whether the given connector ID was removed.
+   */
+  public removeConnectorId(connectorId: string): boolean {
+    for (const connectorItem of this.connectorIds) {
+      if (connectorItem === connectorId) {
+        this.connectorIds.splice(this.connectorIds.findIndex(x => x === connectorItem), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the connector ID at the given index
+   * @param {number} index The index of the connector ID
+   * @return {boolean} Whether the connector ID at the given index was removed
+   */
+  public removeConnectorIdAt(index: number): boolean {
+    return this.connectorIds.splice(index, 1).length > 0;
+  }
 }
 
 /**
- * Removes the connector ID at the given index
- * @param {number} index The index of the connector ID
- * @return {boolean} Whether the connector ID at the given index was removed
- */
-Subpart.prototype.removeConnectorIdAt = function (index) {
-  return this.connectorIds.splice(index, 1).length > 0
-}
-
-/**
- * @constructor
- * @class
- * @classdesc A Fritzing Part. In Fritzing, a Part is an abstract representation of a circuit component. This can be anything from a wire, to a sensor or microcontroller. The abstraction contains information regarding metadata, wire connections, buses (internal connections), suparts, and SVG image representations. **See the params documentation for parameter-specific definitions**
- * @param {Object} [params = {}] The constructor parameters of this Part
- * @param {string} params.id The ID of this Part
+ * @classdesc A Fritzing Part. In Fritzing, a Part is an abstract representation of a circuit component. This can be anything from a wire, 
+ * to a sensor or microcontroller.
+ * The abstraction contains information regarding metadata, wire connections, buses (internal connections), suparts, and SVG image representations.
+ * **See the params documentation for parameter-specific definitions**
+ * @param {Object} [params = {}] The constructor parameters of this Part.
+ * @param {string} params.id The ID of this Part.
  * @param {string} params.fritzingVersion The version of Fritzing associated with the reference FZP file
- * @param {string} params.referenceFile The reference FZP file for this Part
- * @param {string} params.author The author of this Part
- * @param {string} params.version The arbitrary version of this Part
- * @param {string} params.replacedBy The ID of the Part that renders this Part obselete
- * @param {string} params.title The title of this Part
- * @param {string} params.url An arbitrary URL associated with this Part
- * @param {string} params.label The arbitrary label of this Part. The parameter tends to be more categorical than the Part title, but less so than the taxonomy or family
- * @param {string} params.date The date that this Part was theoretically created
- * @param {string} params.description The description of this Part
- * @param {string} params.taxonomy The taxonomy of this Part. In FZP files, this is normally represented by period-delimited alphanumeric strings. **Example:** part.dip.14.pins
- * @param {string} params.language The language theoretically used to create this Part
- * @param {string} params.family The arbitrary Part family that this Part belongs to
- * @param {string} params.variant The name of this Part which makes it unique within its family. The parameter often references this Part's family by name
+ * @param {string} params.referenceFile The reference FZP file for this Part.
+ * @param {string} params.author The author of this Part.
+ * @param {string} params.version The arbitrary version of this Part.
+ * @param {string} params.replacedBy The ID of the Part that renders this Part obselete.
+ * @param {string} params.title The title of this Part.
+ * @param {string} params.url An arbitrary URL associated with this Part.
+ * @param {string} params.label The arbitrary label of this Part. The parameter tends to be more categorical than the Part title,
+ * but less so than the taxonomy or family.
+ * @param {string} params.date The date that this Part was theoretically created.
+ * @param {string} params.description The description of this Part.
+ * @param {string} params.taxonomy The taxonomy of this Part. In FZP files, this is normally represented by period-delimited alphanumeric strings.
+ * **Example:** part.dip.14.pins.
+ * @param {string} params.language The language theoretically used to create this Part.
+ * @param {string} params.family The arbitrary Part family that this Part belongs to.
+ * @param {string} params.variant The name of this Part which makes it unique within its family.
+ * The parameter often references this Part's family by name.
  * @param {string} params.defaultUnits The default units that this Part's dimensions are measured in
- * @param {string} [params.ignoreTerminalPoints = false] Whether to ignore the custom terminal points of this Part's {@link PartConnector}s in Fritzing. If **true**, the terminal points of this Part's {@link PartConnector}s default to their SVG connector center
- * @param {string[]} [params.tags = []] The categorical tags of this Part. Tags are often alphanumeric, with the occasional dash (-)
- * @param {PartProperty[]} [params.properties = [[]] The arbitrary properties of this Part
- * @param {PartViewSettings[]} [params.viewSettings = []] The {@link PartViewSettings} of this Part
- * @param {PartConnector[]} [params.connectors = []] The {@link PartConnector}s of this Part
- * @param {Bus[]} [params.buses = []] The {@link Bus}es of this Part
- * @param {Subpart[]} [params.subparts = []] The {@link Subpart}s of this Part
+ * @param {string} [params.ignoreTerminalPoints = false] Whether to ignore the custom terminal points
+ * of this Part's {@link PartConnector}s in Fritzing.
+ * If **true**, the terminal points of this Part's {@link PartConnector}s default to their SVG connector center.
+ * @param {string[]} [params.tags = []] The categorical tags of this Part. Tags are often alphanumeric, with the occasional dash (-).
+ * @param {PartProperty[]} [params.properties = [[]] The arbitrary properties of this Part.
+ * @param {PartViewSettings[]} [params.viewSettings = []] The {@link PartViewSettings} of this Part.
+ * @param {PartConnector[]} [params.connectors = []] The {@link PartConnector}s of this Part.
+ * @param {Bus[]} [params.buses = []] The {@link Bus}es of this Part.
+ * @param {Subpart[]} [params.subparts = []] The {@link Subpart}s of this Part.
  */
 var Part = function (params = {}) {
   this.moduleId = params.moduleId
