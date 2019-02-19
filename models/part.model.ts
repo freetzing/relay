@@ -540,12 +540,12 @@ export class Subpart {
 }
 
 /**
- * @classdesc A Fritzing Part. In Fritzing, a Part is an abstract representation of a circuit component. This can be anything from a wire, 
+ * @classdesc A Fritzing Part. In Fritzing, a Part is an abstract representation of a circuit component. This can be anything from a wire,
  * to a sensor or microcontroller.
  * The abstraction contains information regarding metadata, wire connections, buses (internal connections), suparts, and SVG image representations.
  * **See the params documentation for parameter-specific definitions**
  * @param {Object} [params = {}] The constructor parameters of this Part.
- * @param {string} params.id The ID of this Part.
+ * @param {string} params.moduleId The ID of this Part.
  * @param {string} params.fritzingVersion The version of Fritzing associated with the reference FZP file
  * @param {string} params.referenceFile The reference FZP file for this Part.
  * @param {string} params.author The author of this Part.
@@ -564,7 +564,7 @@ export class Subpart {
  * @param {string} params.variant The name of this Part which makes it unique within its family.
  * The parameter often references this Part's family by name.
  * @param {string} params.defaultUnits The default units that this Part's dimensions are measured in
- * @param {string} [params.ignoreTerminalPoints = false] Whether to ignore the custom terminal points
+ * @param {boolean} [params.ignoreTerminalPoints = false] Whether to ignore the custom terminal points
  * of this Part's {@link PartConnector}s in Fritzing.
  * If **true**, the terminal points of this Part's {@link PartConnector}s default to their SVG connector center.
  * @param {string[]} [params.tags = []] The categorical tags of this Part. Tags are often alphanumeric, with the occasional dash (-).
@@ -574,464 +574,469 @@ export class Subpart {
  * @param {Bus[]} [params.buses = []] The {@link Bus}es of this Part.
  * @param {Subpart[]} [params.subparts = []] The {@link Subpart}s of this Part.
  */
-var Part = function (params = {}) {
-  this.moduleId = params.moduleId
-  this.fritzingVersion = params.fritzingVersion
-  this.referenceFile = params.referenceFile
-  this.author = params.author
-  this.version = params.version
-  this.replacedBy = params.replacedBy
-  this.title = params.title
-  this.url = params.url
-  this.label = params.label
-  this.date = params.date
-  this.description = params.description
-  this.taxonomy = params.taxonomy
-  this.language = params.language
-  this.family = params.family
-  this.variant = params.variant
-  this.defaultUnits = params.defaultUnits
-  this.ignoreTerminalPoints = params.ignoreTerminalPoints || false
-  this.tags = params.tags || []
-  this.properties = params.properties || []
-  this.viewSettings = params.viewSettings || []
-  this.connectors = params.connectors || []
-  this.buses = params.buses || []
-  this.subparts = params.subparts || []
-}
+export class Part {
+  public moduleId: string;
+  public fritzingVersion: string;
+  public referenceFile: string;
+  public author: string;
+  public version: string;
+  public replacedBy: string;
+  public title: string;
+  public url: string;
+  public label: string;
+  public date: string;
+  public description: string;
+  public taxonomy: string;
+  public language: string;
+  public family: string;
+  public variant: string;
+  public defaultUnits: string;
+  public ignoreTerminalPoints: boolean;
+  public tags: string[];
+  public properties: PartProperty[];
+  public viewSettings: PartViewSettings[];
+  public connectors: PartConnector[];
+  public buses: Bus[];
+  public subparts: Subpart[];
 
-/**
- * Returns the tag at the given index
- * @param {number} index The index of the tag
- * @return {string} The tag at the given index
- */
-Part.prototype.getTagAt = function (index) {
-  return this.tags[index]
-}
+  constructor(params: Part) {
+    this.moduleId = params.moduleId;
+    this.fritzingVersion = params.fritzingVersion;
+    this.referenceFile = params.referenceFile;
+    this.author = params.author;
+    this.version = params.version;
+    this.replacedBy = params.replacedBy;
+    this.title = params.title;
+    this.url = params.url;
+    this.label = params.label;
+    this.date = params.date;
+    this.description = params.description;
+    this.taxonomy = params.taxonomy;
+    this.language = params.language;
+    this.family = params.family;
+    this.variant = params.variant;
+    this.defaultUnits = params.defaultUnits;
+    this.ignoreTerminalPoints = params.ignoreTerminalPoints || false;
+    this.tags = params.tags || [];
+    this.properties = params.properties || [];
+    this.viewSettings = params.viewSettings || [];
+    this.connectors = params.connectors || [];
+    this.buses = params.buses || [];
+    this.subparts = params.subparts || [];
+  }
 
-/**
- * Adds a tag to this Part on the condition that it does not already exist
- * @param {string} tag The tag to be added
- */
-Part.prototype.setTag = function (tag) {
-  if (!this.hasTag(tag)) this.tags.push(tag)
-}
+  /**
+   * Returns the tag at the given index
+   * @param {number} index The index of the tag
+   * @return {string} The tag at the given index
+   */
+  public getTagAt(index: number): string {
+    return this.tags[index];
+  }
 
-/**
- * Returns whether this Part has the given tag
- * @param {string} tag The given tag to search for
- * @return {boolean} Whether this Part has the given tag
- */
-Part.prototype.hasTag = function (tag) {
-  var has = false
-  for (var i = 0; i < this.tags.length; i++) {
-    if (this.tags[i] === tag) {
-      has = true
-      break
+  /**
+   * Adds a tag to this Part on the condition that it does not already exist
+   * @param {string} tag The tag to be added
+   */
+  public setTag(tag: string): void {
+    if (!this.hasTag(tag)) {
+      this.tags.push(tag);
     }
   }
-  return has
-}
 
-/**
- * Removes the given tag
- * @param {string} tag The tag to be removed
- * @return {boolean} Whether the given tag was removed
- */
-Part.prototype.removeTag = function (tag) {
-  var removed = false
-  for (var i = 0; i < this.tags.length; i++) {
-    if (this.tags[i] === tag) {
-      this.tags.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Returns whether this Part has the given tag
+   * @param {string} tag The given tag to search for
+   * @return {boolean} Whether this Part has the given tag
+   */
+  public hasTag(tag: string): boolean {
+    for (const tagItem of this.tags) {
+        if (tagItem === tag) {
+          return true;
+        }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the given tag
+   * @param {string} tag The tag to be removed
+   * @return {boolean} Whether the given tag was removed
+   */
+  public removeTag(tag: string): boolean {
+    for (const tagItem of this.tags) {
+      if (tagItem === tag) {
+        this.tags.splice(this.tags.findIndex(x => x === tag), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the tag at the given index
+   * @param {number} index The index of the tag
+   * @return {boolean} Whether the tag at the given index was removed
+   */
+  public removeTagAt(index: number): boolean {
+    return this.tags.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link PartProperty} with the given name
+   * @param {string} name The name of the {@link PartProperty}
+   * @return {PartProperty} The {@link PartProperty} with the given name
+   */
+  public getProperty(name: string): PartProperty {
+    for (const propertyItem of this.properties) {
+      if (propertyItem.name === name) {
+        return propertyItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link PartProperty} at the given index
+   * @param {number} index The index of the {@link PartProperty}
+   * @return {PartProperty} The {@link PartProperty} at the given index
+   */
+  public getPropertyAt(index: number): PartProperty {
+    return this.properties[index];
+  }
+
+  /**
+   * Adds a {@link PartProperty} to this Part on the condition that another {@link PartProperty} with the same name does not already exist
+   * @param {PartProperty} property The {@link PartProperty} to be added
+   */
+  public setProperty(property: PartProperty): void {
+    if (!this.hasProperty(property.name)) {
+      this.properties.push(property);
     }
   }
-  return removed
-}
 
-/**
- * Removes the tag at the given index
- * @param {number} index The index of the tag
- * @return {boolean} Whether the tag at the given index was removed
- */
-Part.prototype.removeTagAt = function (index) {
-  return this.tags.splice(index, 1).length > 0
-}
+  /**
+   * Returns whether this Part has a {@link PartProperty} with the given name
+   * @param {string} name The given name to search for
+   * @return {boolean} Whether this Part has a {@link PartProperty} with the given name
+   */
+  public hasProperty(name: string): boolean {
+    for (const propertyItem of this.properties) {
+      if (propertyItem.name === name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Returns the {@link PartProperty} with the given name
- * @param {string} name The name of the {@link PartProperty}
- * @return {PartProperty} The {@link PartProperty} with the given name
- */
-Part.prototype.getProperty = function (name) {
-  var ret
-  for (var i = 0; i < this.properties; i++) {
-    if (this.properties[i].name === name) {
-      ret = this.properties[i]
-      break
+  /**
+   * Removes the {@link PartProperty} with the given name
+   * @param {string} name The name of the {@link PartProperty}
+   * @return {boolean} Whether a {@link PartProperty} with the given name was removed
+   */
+  public removeProperty(name: string): boolean {
+    for (const propertyItem of this.properties) {
+      if (propertyItem.name === name) {
+        this.properties.splice(this.properties.findIndex(x => x.name === name), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the {@link PartProperty} at the given index
+   * @param {number} index The index of the {@link PartProperty}
+   * @return {boolean} Whether a {@link PartProperty} with the given index was removed
+   */
+  public removePropertyAt(index: number): boolean {
+    return this.properties.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link PartViewSettings} with the given name
+   * @param {string} name The name of the {@link PartViewSettings}
+   * @return {PartViewSettings} The {@link PartViewSettings} with the given name
+   */
+  public getViewSettings(name: string): PartViewSettings {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        return settingItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link PartViewSettings} at the given index
+   * @param {number} index The index of the {@link PartViewSettings}
+   * @return {PartViewSettings} The {@link PartViewSettings} at the given index
+   */
+  public getViewSettingsAt(index: number): PartViewSettings {
+    return this.viewSettings[index];
+  }
+
+  /**
+   * Adds a {@link PartViewSettings} to this Part on the condition that another {@link PartViewSettings} with the same name does not already exist
+   * @param {PartViewSettings} viewSettings The {@link PartViewSettings} to be added
+   */
+  public setViewSettings(viewSettings: PartViewSettings): void {
+    if (!this.hasViewSettings(viewSettings.name)) {
+      this.viewSettings.push(viewSettings);
     }
   }
-  return ret
-}
 
-/**
- * Returns the {@link PartProperty} at the given index
- * @param {number} index The index of the {@link PartProperty}
- * @return {PartProperty} The {@link PartProperty} at the given index
- */
-Part.prototype.getPropertyAt = function (index) {
-  return this.properties[index]
-}
+  /**
+   * Returns whether this Part has a {@link PartViewSettings} with the given name
+   * @param {string} name The given name to search for
+   * @return {boolean} Whether this Part has a {@link PartViewSettings} with the given name
+   */
+  public hasViewSettings(name: string): boolean {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Adds a {@link PartProperty} to this Part on the condition that another {@link PartProperty} with the same name does not already exist
- * @param {PartProperty} property The {@link PartProperty} to be added
- */
-Part.prototype.setProperty = function (property) {
-  if (!this.hasProperty(property.name)) this.properties.push(property)
-}
+  /**
+   * Removes the {@link PartViewSettings} with the given name
+   * @param {string} name The name of the {@link PartViewSettings}
+   * @return {boolean} Whether a {@link PartViewSettings} with the given name was removed
+   */
+  public removeViewSettings(name: string): boolean {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        this.viewSettings.splice(this.viewSettings.findIndex(x => x.name === name), 1);
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Returns whether this Part has a {@link PartProperty} with the given name
- * @param {string} name The given name to search for
- * @return {boolean} Whether this Part has a {@link PartProperty} with the given name
- */
-Part.prototype.hasProperty = function (name) {
-  var has = false
-  for (var i = 0; i < this.properties.length; i++) {
-    if (this.properties[i].name === name) {
-      has = true
-      break
+  /**
+   * Removes the {@link PartViewSettings} at the given index
+   * @param {number} index The index of the {@link PartViewSettings}
+   * @return {boolean} Whether a {@link PartViewSettings} with the given index was removed
+   */
+  public removeViewSettingsAt(index: number): boolean {
+    return this.viewSettings.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link PartConnector} with the given ID
+   * @param {string} id The ID of the {@link PartConnector}
+   * @return {PartConnector} The {@link PartConnector} with the given ID
+   */
+  public getConnector(id: string): PartConnector {
+    for (const connectorItem of this.connectors) {
+      if (connectorItem.id === id) {
+        return connectorItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link PartConnector} at the given index
+   * @param {number} index The index of the {@link PartConnector}
+   * @return {PartConnector} The {@link PartConnector} at the given index
+   */
+  public getConnectorAt(index: number): PartConnector {
+    return this.connectors[index];
+  }
+
+  /**
+   * Adds a {@link PartConnector} to this Part on the condition that another {@link PartConnector} with the same ID does not already exist
+   * @param {PartConnector} connector The {@link PartConnector} to be added
+   */
+  public setConnector(connector: PartConnector): void {
+    if (!this.hasConnector(connector.id)) {
+      this.connectors.push(connector);
     }
   }
-  return has
-}
 
-/**
- * Removes the {@link PartProperty} with the given name
- * @param {string} name The name of the {@link PartProperty}
- * @return {boolean} Whether a {@link PartProperty} with the given name was removed
- */
-Part.prototype.removeProperty = function (name) {
-  var removed = false
-  for (var i = 0; i < this.properties.length; i++) {
-    if (this.properties[i].name === name) {
-      this.properties.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Returns whether this Part has a {@link PartConnector} with the given ID
+   * @param {string} id The given ID to search for
+   * @return {boolean} Whether this Part has a {@link PartConnector} with the given ID
+   */
+  public hasConnector(id: string): boolean {
+    for (const connectorItem of this.connectors) {
+      if (connectorItem.id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the {@link PartConnector} with the given ID
+   * @param {string} id The ID of the {@link PartConnector}
+   * @return {boolean} Whether a {@link PartConnector} with the given ID was removed
+   */
+  public removeConnector(id: string): boolean {
+    for (const connectorItem of this.connectors) {
+      if (connectorItem.id === id) {
+        this.connectors.splice(this.connectors.findIndex(x => x.id === id), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the {@link PartConnector} at the given index
+   * @param {number} index The index of the {@link PartConnector}
+   * @return {boolean} Whether a {@link PartConnector} with the given index was removed
+   */
+  public removeConnectorAt(index: number): boolean {
+    return this.connectors.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link Bus} with the given ID
+   * @param {string} id The ID of the {@link Bus}
+   * @return {Bus} The {@link Bus} with the given ID
+   */
+  public getBus(id: string): Bus {
+    for (const busItem of this.buses) {
+      if (busItem.id === id) {
+        return busItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link Bus} at the given index
+   * @param {number} index The index of the {@link Bus}
+   * @return {Bus} The {@link Bus} at the given index
+   */
+  public getBusAt(index: number): Bus {
+    return this.buses[index];
+  }
+
+  /**
+   * Adds a {@link Bus} to this Part on the condition that another {@link Bus} with the same ID does not already exist
+   * @param {Bus} bus The {@link Bus} to be added
+   */
+  public setBus(bus: Bus): void {
+    if (!this.hasBus(bus.id)) {
+      this.buses.push(bus);
     }
   }
-  return removed
-}
 
-/**
- * Removes the {@link PartProperty} at the given index
- * @param {number} index The index of the {@link PartProperty}
- * @return {boolean} Whether a {@link PartProperty} with the given index was removed
- */
-Part.prototype.removePropertyAt = function (index) {
-  return this.properties.splice(index, 1).length > 0
-}
+  /**
+   * Returns whether this Part has a {@link Bus} with the given ID
+   * @param {string} id The given ID to search for
+   * @return {boolean} Whether this Part has a {@link Bus} with the given ID
+   */
+  public hasBus(id: string): boolean {
+    for (const busItem of this.buses) {
+      if (busItem.id === id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-/**
- * Returns the {@link PartViewSettings} with the given name
- * @param {string} name The name of the {@link PartViewSettings}
- * @return {PartViewSettings} The {@link PartViewSettings} with the given name
- */
-Part.prototype.getViewSettings = function (name) {
-  var ret
-  for (var i = 0; i < this.viewSettings; i++) {
-    if (this.viewSettings[i].name === name) {
-      ret = this.viewSettings[i]
-      break
+  /**
+   * Removes the {@link Bus} with the given ID
+   * @param {string} id The ID of the {@link Bus}
+   * @return {boolean} Whether a {@link Bus} with the given ID was removed
+   */
+  public removeBus(id: string): boolean {
+    for (const busItem of this.buses) {
+      if (busItem.id === id) {
+        this.buses.splice(this.buses.findIndex(x => x.id === id), 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Removes the {@link Bus} at the given index
+   * @param {number} index The index of the {@link Bus}
+   * @return {boolean} Whether a {@link Bus} with the given index was removed
+   */
+  public removeBusAt(index: number): boolean {
+    return this.buses.splice(index, 1).length > 0;
+  }
+
+  /**
+   * Returns the {@link Subpart} with the given ID
+   * @param {string} id The ID of the {@link Subpart}
+   * @return {Subpart} The {@link Subpart} with the given ID
+   */
+  public getSubpart(id: string): Subpart {
+    for (const subpartItem of this.subparts) {
+      if (subpartItem.id === id) {
+        return subpartItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link Subpart} at the given index
+   * @param {number} index The index of the {@link Subpart}
+   * @return {Subpart} The {@link Subpart} at the given index
+   */
+  public getSubpartAt(index: number): Subpart {
+    return this.subparts[index];
+  }
+
+  /**
+   * Adds a {@link Subpart} to this Part on the condition that another {@link Subpart} with the same ID does not already exist
+   * @param {Subpart} subpart The {@link Subpart} to be added
+   */
+  public setSubpart(subpart: Subpart): void {
+    if (!this.hasSubpart(subpart.id)) {
+      this.subparts.push(subpart);
     }
   }
-  return ret
-}
 
-/**
- * Returns the {@link PartViewSettings} at the given index
- * @param {number} index The index of the {@link PartViewSettings}
- * @return {PartViewSettings} The {@link PartViewSettings} at the given index
- */
-Part.prototype.getViewSettingsAt = function (index) {
-  return this.viewSettings[index]
-}
-
-/**
- * Adds a {@link PartViewSettings} to this Part on the condition that another {@link PartViewSettings} with the same name does not already exist
- * @param {PartViewSettings} viewSettings The {@link PartViewSettings} to be added
- */
-Part.prototype.setViewSettings = function (viewSettings) {
-  if (!this.hasViewSettings(viewSettings.name)) this.viewSettings.push(viewSettings)
-}
-
-/**
- * Returns whether this Part has a {@link PartViewSettings} with the given name
- * @param {string} name The given name to search for
- * @return {boolean} Whether this Part has a {@link PartViewSettings} with the given name
- */
-Part.prototype.hasViewSettings = function (name) {
-  var has = false
-  for (var i = 0; i < this.viewSettings.length; i++) {
-    if (this.viewSettings[i].name === name) {
-      has = true
-      break
+  /**
+   * Returns whether this Part has a {@link Subpart} with the given ID
+   * @param {string} id The given ID to search for
+   * @return {boolean} Whether this Part has a {@link Subpart} with the given ID
+   */
+  public hasSubpart(id: string): boolean {
+    for (const subpartItem of this.subparts) {
+      if (subpartItem.id === id) {
+        return true;
+      }
     }
+    return false;
   }
-  return has
-}
 
-/**
- * Removes the {@link PartViewSettings} with the given name
- * @param {string} name The name of the {@link PartViewSettings}
- * @return {boolean} Whether a {@link PartViewSettings} with the given name was removed
- */
-Part.prototype.removeViewSettings = function (name) {
-  var removed = false
-  for (var i = 0; i < this.viewSettings.length; i++) {
-    if (this.viewSettings[i].name === name) {
-      this.viewSettings.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Removes the {@link Subpart} with the given ID
+   * @param {string} id The ID of the {@link Subpart}
+   * @return {boolean} Whether a {@link Subpart} with the given ID was removed
+   */
+  public removeSubpart(id: string): boolean {
+    for (const subpartItem of this.subparts) {
+      if (subpartItem.id === id) {
+        this.subparts.splice(this.subparts.findIndex(x => x.id === id), 1);
+        return true;
+      }
     }
+    return false;
   }
-  return removed
-}
 
-/**
- * Removes the {@link PartViewSettings} at the given index
- * @param {number} index The index of the {@link PartViewSettings}
- * @return {boolean} Whether a {@link PartViewSettings} with the given index was removed
- */
-Part.prototype.removeViewSettingsAt = function (index) {
-  return this.viewSettings.splice(index, 1).length > 0
-}
-
-/**
- * Returns the {@link PartConnector} with the given ID
- * @param {string} id The ID of the {@link PartConnector}
- * @return {PartConnector} The {@link PartConnector} with the given ID
- */
-Part.prototype.getConnector = function (id) {
-  var ret
-  for (var i = 0; i < this.connectors; i++) {
-    if (this.connectors[i].id === id) {
-      ret = this.connectors[i]
-      break
-    }
+  /**
+   * Removes the {@link Subpart} at the given index
+   * @param {number} index The index of the {@link Subpart}
+   * @return {boolean} Whether a {@link Subpart} with the given index was removed
+   */
+  public removeSubpartAt(index: number): boolean {
+    return this.subparts.splice(index, 1).length > 0;
   }
-  return ret
-}
 
-/**
- * Returns the {@link PartConnector} at the given index
- * @param {number} index The index of the {@link PartConnector}
- * @return {PartConnector} The {@link PartConnector} at the given index
- */
-Part.prototype.getConnectorAt = function (index) {
-  return this.connectors[index]
-}
-
-/**
- * Adds a {@link PartConnector} to this Part on the condition that another {@link PartConnector} with the same ID does not already exist
- * @param {PartConnector} connector The {@link PartConnector} to be added
- */
-Part.prototype.setConnector = function (connector) {
-  if (!this.hasConnector(connector.id)) this.connectors.push(connector)
-}
-
-/**
- * Returns whether this Part has a {@link PartConnector} with the given ID
- * @param {string} id The given ID to search for
- * @return {boolean} Whether this Part has a {@link PartConnector} with the given ID
- */
-Part.prototype.hasConnector = function (id) {
-  var has = false
-  for (var i = 0; i < this.connectors.length; i++) {
-    if (this.connectors[i].id === id) {
-      has = true
-      break
-    }
-  }
-  return has
-}
-
-/**
- * Removes the {@link PartConnector} with the given ID
- * @param {string} id The ID of the {@link PartConnector}
- * @return {boolean} Whether a {@link PartConnector} with the given ID was removed
- */
-Part.prototype.removeConnector = function (id) {
-  var removed = false
-  for (var i = 0; i < this.connectors.length; i++) {
-    if (this.connectors[i].id === id) {
-      this.connectors.splice(i, 1)
-      removed = true
-      break
-    }
-  }
-  return removed
-}
-
-/**
- * Removes the {@link PartConnector} at the given index
- * @param {number} index The index of the {@link PartConnector}
- * @return {boolean} Whether a {@link PartConnector} with the given index was removed
- */
-Part.prototype.removeConnectorAt = function (index) {
-  return this.connectors.splice(index, 1).length > 0
-}
-
-/**
- * Returns the {@link Bus} with the given ID
- * @param {string} id The ID of the {@link Bus}
- * @return {Bus} The {@link Bus} with the given ID
- */
-Part.prototype.getBus = function (id) {
-  var ret
-  for (var i = 0; i < this.buses; i++) {
-    if (this.buses[i].id === id) {
-      ret = this.buses[i]
-      break
-    }
-  }
-  return ret
-}
-
-/**
- * Returns the {@link Bus} at the given index
- * @param {number} index The index of the {@link Bus}
- * @return {Bus} The {@link Bus} at the given index
- */
-Part.prototype.getBusAt = function (index) {
-  return this.buses[index]
-}
-
-/**
- * Adds a {@link Bus} to this Part on the condition that another {@link Bus} with the same ID does not already exist
- * @param {Bus} bus The {@link Bus} to be added
- */
-Part.prototype.setBus = function (bus) {
-  if (!this.hasBus(bus.id)) this.buses.push(bus)
-}
-
-/**
- * Returns whether this Part has a {@link Bus} with the given ID
- * @param {string} id The given ID to search for
- * @return {boolean} Whether this Part has a {@link Bus} with the given ID
- */
-Part.prototype.hasBus = function (id) {
-  var has = false
-  for (var i = 0; i < this.buses.length; i++) {
-    if (this.buses[i].id === id) {
-      has = true
-      break
-    }
-  }
-  return has
-}
-
-/**
- * Removes the {@link Bus} with the given ID
- * @param {string} id The ID of the {@link Bus}
- * @return {boolean} Whether a {@link Bus} with the given ID was removed
- */
-Part.prototype.removeBus = function (id) {
-  var removed = false
-  for (var i = 0; i < this.buses.length; i++) {
-    if (this.buses[i].id === id) {
-      this.buses.splice(i, 1)
-      removed = true
-      break
-    }
-  }
-  return removed
-}
-
-/**
- * Removes the {@link Bus} at the given index
- * @param {number} index The index of the {@link Bus}
- * @return {boolean} Whether a {@link Bus} with the given index was removed
- */
-Part.prototype.removeBusAt = function (index) {
-  return this.buses.splice(index, 1).length > 0
-}
-
-/**
- * Returns the {@link Subpart} with the given ID
- * @param {string} id The ID of the {@link Subpart}
- * @return {Subpart} The {@link Subpart} with the given ID
- */
-Part.prototype.getSubpart = function (id) {
-  var ret
-  for (var i = 0; i < this.subparts; i++) {
-    if (this.subparts[i].id === id) {
-      ret = this.subparts[i]
-      break
-    }
-  }
-  return ret
-}
-
-/**
- * Returns the {@link Subpart} at the given index
- * @param {number} index The index of the {@link Subpart}
- * @return {Subpart} The {@link Subpart} at the given index
- */
-Part.prototype.getSubpartAt = function (index) {
-  return this.subparts[index]
-}
-
-/**
- * Adds a {@link Subpart} to this Part on the condition that another {@link Subpart} with the same ID does not already exist
- * @param {Subpart} subpart The {@link Subpart} to be added
- */
-Part.prototype.setSubpart = function (subpart) {
-  if (!this.hasSubpart(subpart.id)) this.subparts.push(subpart)
-}
-
-/**
- * Returns whether this Part has a {@link Subpart} with the given ID
- * @param {string} id The given ID to search for
- * @return {boolean} Whether this Part has a {@link Subpart} with the given ID
- */
-Part.prototype.hasSubpart = function (id) {
-  var has = false
-  for (var i = 0; i < this.subparts.length; i++) {
-    if (this.subparts[i].id === id) {
-      has = true
-      break
-    }
-  }
-  return has
-}
-
-/**
- * Removes the {@link Subpart} with the given ID
- * @param {string} id The ID of the {@link Subpart}
- * @return {boolean} Whether a {@link Subpart} with the given ID was removed
- */
-Part.prototype.removeSubpart = function (id) {
-  var removed = false
-  for (var i = 0; i < this.subparts.length; i++) {
-    if (this.subparts[i].id === id) {
-      this.subparts.splice(i, 1)
-      removed = true
-      break
-    }
-  }
-  return removed
-}
-
-/**
- * Removes the {@link Subpart} at the given index
- * @param {number} index The index of the {@link Subpart}
- * @return {boolean} Whether a {@link Subpart} with the given index was removed
- */
-Part.prototype.removeSubpartAt = function (index) {
-  return this.subparts.splice(index, 1).length > 0
 }
 
 /**
