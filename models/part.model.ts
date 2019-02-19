@@ -575,6 +575,34 @@ export class Subpart {
  * @param {Subpart[]} [params.subparts = []] The {@link Subpart}s of this Part.
  */
 export class Part {
+  /**
+   * @static
+   * Returns the given Part as a string of FZP XML
+   * @param {Part} part The given Part
+   * @return {string} The given Part as a string of FZP XML
+   */
+  public static toFZP(part: Part): string {
+    return part.toFZP();
+  }
+
+  /**
+   * @static
+   * Returns a Promise that resolves with a {@link Part} object converted from the given FZP XML
+   * @param {string} fzp A string of FZP XML
+   * @return {Promise} A Promise that resolves with a {@link Part} object converted from the given FZP XML
+   */
+  public static fromFZP(fzp: string): Promise<Part> {
+    return new Promise((resolve, reject) => {
+      xml2js.parseString(fzp, { explicitCharkey: true }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(new Part().ParseStringData(data));
+        }
+      });
+    });
+  }
+
   public moduleId: string;
   public fritzingVersion: string;
   public referenceFile: string;
@@ -599,7 +627,7 @@ export class Part {
   public buses: Bus[];
   public subparts: Subpart[];
 
-  constructor(params: Part) {
+  constructor(params?: Part) {
     this.moduleId = params.moduleId;
     this.fritzingVersion = params.fritzingVersion;
     this.referenceFile = params.referenceFile;
@@ -1037,6 +1065,18 @@ export class Part {
     return this.subparts.splice(index, 1).length > 0;
   }
 
+  /**
+   * Returns this Part as a string of FZP XML
+   * @return {string} This Part as a string of FZP XML
+   */
+  public toFZP(): string {
+    return "";
+  }
+
+  private ParseStringData(data: any): Part {
+    return new Part(data);
+  }
+
 }
 
 /**
@@ -1287,16 +1327,6 @@ Part.prototype.toFZP = function () {
   return new xml2js.Builder().buildObject(({
     module: module
   }))
-}
-
-/**
- * @static
- * Returns the given Part as a string of FZP XML
- * @param {Part} part The given Part
- * @return {string} The given Part as a string of FZP XML
- */
-Part.toFZP = function (part) {
-  return part.toFZP()
 }
 
 /**

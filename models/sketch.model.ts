@@ -923,6 +923,24 @@ export class SketchPCBViewSettings extends SketchViewSettings implements ISketch
 export class Sketch implements ISketch {
   /**
    * @static
+   * Returns a Promise that resolves with a {@link Sketch} object converted from the given FZ XML
+   * @param {string} fz A string of FZ XML
+   * @return {Promise} A Promise that resolves with a {@link Sketch} object converted from the given FZ XML
+   */
+  public static fromFZ(fz: string): Promise<Sketch> {
+    return new Promise((resolve, reject) => {
+      xml2js.parseString(fz, { explicitCharkey: true }, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(new Sketch().ParseStringData(data));
+        }
+      });
+    });
+  }
+
+  /**
+   * @static
    * Returns the given Sketch as a string of FZ XML
    * @param {Sketch} sketch The given Sketch
    * @return {string} The given Sketch as a string of FZ XML
@@ -937,7 +955,7 @@ export class Sketch implements ISketch {
   public viewSettings: SketchViewSettings[];
   public instances: Instance[];
 
-  constructor(params: Sketch) {
+  constructor(params?: Sketch) {
     this.fritzingVersion = params.fritzingVersion;
     this.programs = params.programs || [];
     this.boards = params.boards || [];
@@ -1433,38 +1451,6 @@ export class Sketch implements ISketch {
     }));
   }
 
-  /**
-   * @static
-   * Returns a Promise that resolves with a {@link Sketch} object converted from the given FZ XML
-   * @param {string} fz A string of FZ XML
-   * @return {Promise} A Promise that resolves with a {@link Sketch} object converted from the given FZ XML
-   */
-  public fromFZ(fz: string): Promise<Sketch> {
-    return new Promise((resolve, reject) => {
-      xml2js.parseString(fz, { explicitCharkey: true }, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(this.ParseStringData(data));
-        }
-      });
-    });
-  }
-
-  private getOptionalValue(object: any): any {
-    if (object) {
-      return object[0]._;
-    }
-    return undefined;
-  }
-
-  private getOptionalAttribute(object: any, attribute: string): any {
-    if (object && object.$) {
-      return object.$[attribute];
-    }
-    return undefined;
-  }
-
   private ParseStringData(data: any): Sketch {
     const moduleObj = data.module;
     const boardsData: Board[] = [];
@@ -1738,5 +1724,19 @@ export class Sketch implements ISketch {
       programs: programsData,
       viewSettings: viewSettingsData,
     } as Sketch);
+  }
+
+  private getOptionalValue(object: any): any {
+    if (object) {
+      return object[0]._;
+    }
+    return undefined;
+  }
+
+  private getOptionalAttribute(object: any, attribute: string): any {
+    if (object && object.$) {
+      return object.$[attribute];
+    }
+    return undefined;
   }
 }
