@@ -143,136 +143,154 @@ export class PartViewSettings implements IPartViewSettings {
  * @param {*} flow The flow of the Current
  * @param {*} valueMax The maximum value of the Current
  */
-var Current = function (flow, valueMax) {
-  this.flow = flow
-  this.valueMax = valueMax
+export class Current {
+  public flow: any;
+  public valueMax: any;
+
+  constructor(params: Current) {
+    this.flow = params.flow;
+    this.valueMax = params.valueMax;
+  }
 }
 
 /**
- * @constructor
- * @class
- * @classdesc The ERC (Electric Rule Check) for a {@link PartConnector}
- * @param {string} type The arbitrary type of this ERC
- * @param {string} voltage The voltage of this ERC
- * @param {Current} current The current of this ERC
- * @param {string} ignore The condition, if met, by which this ERC is ignored
+ * @classdesc The ERC (Electric Rule Check) for a {@link PartConnector}.
+ * @param {string} type The arbitrary type of this ERC.
+ * @param {string} voltage The voltage of this ERC.
+ * @param {Current} current The current of this ERC.
+ * @param {string} ignore The condition, if met, by which this ERC is ignored.
  */
-var ERC = function (type, voltage, current, ignore) {
-  this.type = type
-  this.voltage = voltage
-  this.current = current
-  this.ignore = ignore
+export class ERC {
+  public type: string;
+  public voltage: string;
+  public current: Current;
+  public ignore: string;
+
+  constructor(params: ERC) {
+    this.type = params.type;
+    this.voltage = params.voltage;
+    this.current = params.current;
+    this.ignore = params.ignore;
+  }
 }
 
 /**
- * @constructor
- * @class
- * @classdesc The layer settings of a {@link PartConnector} for a view
- * @param {object} [params = {}] The constructor parameters of these PartConnectorLayerSettings
- * @param {string} params.name The name of the corresponding layer
- * @param {string} params.svgId The ID of the SVG element associated with the corresponding layer and view of a {@link PartConnector}
- * @param {string} params.terminalId The ID of the SVG element describing the custom terminal point associated with the corresponding layer and view of a {@link PartConnector}
- * @param {string} params.legId The ID of the SVG element representing a bendable "rubber-band" leg associated with the corresponding layer and view of a {@link PartConnector}. The parameter should only be defined if **terminalId** is not
- * @param {string} params.disabled Whether a {@link PartConnector} should be disabled in the corresponding layer and view. The parameter has been renamed from **hybrid** in Fritzing FZP files
+ * @classdesc The layer settings of a {@link PartConnector} for a view.
+ * @param {object} [params = {}] The constructor parameters of these PartConnectorLayerSettings.
+ * @param {string} params.name The name of the corresponding layer.
+ * @param {string} params.svgId The ID of the SVG element associated with the corresponding layer and view of a {@link PartConnector}.
+ * @param {string} params.terminalId The ID of the SVG element describing the custom terminal point associated with the corresponding
+ * layer and view of a {@link PartConnector}.
+ * @param {string} params.legId The ID of the SVG element representing a bendable "rubber-band" leg associated with the corresponding
+ * layer and view of a {@link PartConnector}. The parameter should only be defined if **terminalId** is not
+ * @param {boolean} params.disabled Whether a {@link PartConnector} should be disabled in the corresponding layer and view.
+ * The parameter has been renamed from **hybrid** in Fritzing FZP files.
  */
-var PartConnectorLayerSettings = function (params = {}) {
-  this.name = params.name
-  this.svgId = params.svgId
-  this.terminalId = params.terminalId
-  this.legId = params.legId
-  this.disabled = params.disabled || false
+export class PartConnectorLayerSettings {
+  public name: string;
+  public svgId: string;
+  public terminalId: string;
+  public legId: string;
+  public disabled: boolean;
+
+  constructor(params: PartConnectorLayerSettings) {
+    this.name = params.name;
+    this.svgId = params.svgId;
+    this.terminalId = params.terminalId;
+    this.legId = params.legId;
+    this.disabled = params.disabled || false;
+  }
 }
 
 /**
- * @constructor
- * @class
- * @classdesc The view settings for a {@link PartConnector} in Fritzing
- * @param {string} name The name of the view associated with these PartConnectorViewSettings. The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**
- * @param {PartConnectorLayerSettings[]} [layerSettings = []] The PartConnectorLayerSettings of the {@link PartConnector} for the corresponding view
+ * @classdesc The view settings for a {@link PartConnector} in Fritzing.
+ * @param {string} name The name of the view associated with these PartConnectorViewSettings.
+ * The parameter should be one of four possible values: **breadboard**, **icon**, **pcb**, and **schematic**.
+ * @param {PartConnectorLayerSettings[]} [layerSettings = []] The PartConnectorLayerSettings of the {@link PartConnector} for the corresponding view.
  */
-var PartConnectorViewSettings = function (name, layerSettings) {
-  this.name = name
-  this.layerSettings = layerSettings || []
-}
+export class PartConnectorViewSettings {
+  public name: string;
+  public layerSettings: PartConnectorLayerSettings[];
 
-/**
- * Returns the {@link PartConnectorLayerSettings} with the given name
- * @param {string} name The name of the {@link PartConnectorLayerSettings}
- * @return {PartConnectorLayerSettings} The {@link PartConnectorLayerSettings} with the given name
- */
-PartConnectorViewSettings.prototype.getLayerSettings = function (name) {
-  var layerSettings
-  for (var i = 0; i < this.layerSettings; i++) {
-    if (this.layerSettings[i].name === name) {
-      layerSettings = this.layerSettings[i]
-      break
+  constructor(params: PartConnectorViewSettings) {
+    this.name = params.name;
+    this.layerSettings = params.layerSettings || [];
+  }
+
+  /**
+   * Returns the {@link PartConnectorLayerSettings} with the given name
+   * @param {string} name The name of the {@link PartConnectorLayerSettings}
+   * @return {PartConnectorLayerSettings} The {@link PartConnectorLayerSettings} with the given name
+   */
+  public getLayerSettings(name: string): PartConnectorLayerSettings {
+    for (const layerItem of this.layerSettings) {
+      if (layerItem.name === name) {
+        return layerItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link PartConnectorLayerSettings} at the given index.
+   * @param {number} index The index of the {@link PartConnectorLayerSettings}.
+   * @return {PartConnectorLayerSettings} The {@link PartConnectorLayerSettings} at the given index.
+   */
+  public getLayerSettingsAt(index: number): PartConnectorLayerSettings {
+    return this.layerSettings[index];
+  }
+
+  /**
+   * Adds a {@link PartConnectorLayerSettings} to these PartConnectorViewSettings on the condition that
+   * another {@link PartConnectorLayerSettings} with the same name does not already exist.
+   * @param {PartConnectorLayerSettings} layer The {@link PartConnectorLayerSettings} to be added.
+   */
+  public setLayerSettings(layerSettings): void {
+    if (!this.hasLayerSettings(layerSettings.name)) {
+      this.layerSettings.push(layerSettings);
     }
   }
-  return layerSettings
-}
 
-/**
- * Returns the {@link PartConnectorLayerSettings} at the given index
- * @param {number} index The index of the {@link PartConnectorLayerSettings}
- * @return {PartConnectorLayerSettings} The {@link PartConnectorLayerSettings} at the given index
- */
-PartConnectorViewSettings.prototype.getLayerSettingsAt = function (index) {
-  return this.layerSettings[index]
-}
-
-/**
- * Adds a {@link PartConnectorLayerSettings} to these PartConnectorViewSettings on the condition that another {@link PartConnectorLayerSettings} with the same name does not already exist
- * @param {PartConnectorLayerSettings} layer The {@link PartConnectorLayerSettings} to be added
- */
-PartConnectorViewSettings.prototype.setLayerSettings = function (layerSettings) {
-  if (!this.hasLayerSettings(layerSettings.name)) this.layerSettings.push(layerSettings)
-}
-
-/**
- * Returns whether these PartConnectorViewSettings have a {@link PartConnectorLayerSettings} with the given name
- * @param {string} name The given name to search for
- * @return {boolean} Whether these PartConnectorViewSettings have a {@link PartConnectorLayerSettings} with the given name
- */
-PartConnectorViewSettings.prototype.hasLayerSettings = function (name) {
-  var hasLayerSettings = false
-  for (var i = 0; i < this.layerSettings.length; i++) {
-    if (this.layerSettings[i].name === name) {
-      hasLayerSettings = true
-      break
+  /**
+   * Returns whether these PartConnectorViewSettings have a {@link PartConnectorLayerSettings} with the given name.
+   * @param {string} name The given name to search for.
+   * @return {boolean} Whether these PartConnectorViewSettings have a {@link PartConnectorLayerSettings} with the given name.
+   */
+  public hasLayerSettings(name: string): boolean {
+    for (const layerItem of this.layerSettings) {
+      if (layerItem.name === name) {
+        return true;
+      }
     }
+    return false;
   }
-  return hasLayerSettings
-}
 
-/**
- * Removes the {@link PartConnectorLayerSettings} with the given name
- * @param {string} name The name of the {@link PartConnectorLayerSettings}
- * @return {boolean} Whether a {@link PartConnectorLayerSettings} with the given name was removed
- */
-PartConnectorViewSettings.prototype.removeLayerSettings = function (name) {
-  var removed = false
-  for (var i = 0; i < this.layerSettings.length; i++) {
-    if (this.layerSettings[i].name === name) {
-      this.layerSettings.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Removes the {@link PartConnectorLayerSettings} with the given name
+   * @param {string} name The name of the {@link PartConnectorLayerSettings}
+   * @return {boolean} Whether a {@link PartConnectorLayerSettings} with the given name was removed
+   */
+  public removeLayerSettings(name: string): boolean {
+    for (const layerItem of this.layerSettings) {
+      if (layerItem.name === name) {
+        this.layerSettings.splice(this.layerSettings.findIndex(x => x.name === name), 1);
+        return true;
+      }
     }
+    return false;
   }
-  return removed
+
+  /**
+   * Removes the {@link PartConnectorLayerSettings} at the given index
+   * @param {number} index The index of the {@link PartConnectorLayerSettings}
+   * @return {boolean} Whether a {@link PartConnectorLayerSettings} with the given index was removed
+   */
+  public removeLayerSettingsAt(index: number): boolean {
+    return this.layerSettings.splice(index, 1).length > 0;
+  }
 }
 
 /**
- * Removes the {@link PartConnectorLayerSettings} at the given index
- * @param {number} index The index of the {@link PartConnectorLayerSettings}
- * @return {boolean} Whether a {@link PartConnectorLayerSettings} with the given index was removed
- */
-PartConnectorViewSettings.prototype.removeLayerSettingsAt = function (index) {
-  return this.layerSettings.splice(index, 1).length > 0
-}
-
-/**
- * @constructor
- * @class
  * @classdesc A connection point within a {@link Part} that enables it to interface with other {@link Part}s, most often via wire
  * @param {object} [params = {}] The constructor parameters of this PartConnector
  * @param {string} params.id The ID of this PartConnector
@@ -283,89 +301,96 @@ PartConnectorViewSettings.prototype.removeLayerSettingsAt = function (index) {
  * @param {ERC} params.erc The {@link ERC} (Electric Rule Check) of this PartConnector
  * @param {PartConnectorViewSettings} [params.viewSettings = []] The {@link PartConnectorViewSettings} of this PartConnector
  */
-var PartConnector = function (params = {}) {
-  this.id = params.id
-  this.name = params.name
-  this.type = params.type
-  this.description = params.description
-  this.replacedBy = params.replacedBy
-  this.erc = params.erc
-  this.viewSettings = params.viewSettings || []
-}
+export class PartConnector {
+  public id: string;
+  public name: string;
+  public type: string;
+  public description: string;
+  public replacedBy: string;
+  public erc: ERC;
+  public viewSettings: PartConnectorViewSettings[];
 
-/**
- * Returns the {@link PartConnectorViewSettings} with the given name
- * @param {string} name The name of the {@link PartConnectorViewSettings}
- * @return {PartConnectorViewSettings} The {@link PartConnectorViewSettings} with the given name
- */
-PartConnector.prototype.getViewSettings = function (name) {
-  var ret
-  for (var i = 0; i < this.viewSettings; i++) {
-    if (this.viewSettings[i].name === name) {
-      ret = this.viewSettings[i]
-      break
+  constructor(params: PartConnector) {
+    this.id = params.id;
+    this.name = params.name;
+    this.type = params.type;
+    this.description = params.description;
+    this.replacedBy = params.replacedBy;
+    this.erc = params.erc;
+    this.viewSettings = params.viewSettings || [];
+  }
+
+  /**
+   * Returns the {@link PartConnectorViewSettings} with the given name
+   * @param {string} name The name of the {@link PartConnectorViewSettings}
+   * @return {PartConnectorViewSettings} The {@link PartConnectorViewSettings} with the given name
+   */
+  public getViewSettings(name: string): PartConnectorViewSettings {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        return settingItem;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns the {@link PartConnectorViewSettings} at the given index.
+   * @param {number} index The index of the {@link PartConnectorViewSettings}.
+   * @return {PartConnectorViewSettings} The {@link PartConnectorViewSettings} at the given index.
+   */
+  public getViewSettingsAt(index: number): PartConnectorViewSettings {
+    return this.viewSettings[index];
+  }
+
+  /**
+   * Adds a {@link PartConnectorViewSettings} to this PartConnector on the condition that another
+   * {@link PartConnectorViewSettings} with the same name does not already exist.
+   * @param {PartConnectorViewSettings} viewSettings The {@link PartConnectorViewSettings} to be added.
+   */
+  public setViewSettings(viewSettings: PartConnectorViewSettings): void {
+    if (!this.hasViewSettings(viewSettings.name)) {
+      this.viewSettings.push(viewSettings);
     }
   }
-  return ret
-}
 
-/**
- * Returns the {@link PartConnectorViewSettings} at the given index
- * @param {number} index The index of the {@link PartConnectorViewSettings}
- * @return {PartConnectorViewSettings} The {@link PartConnectorViewSettings} at the given index
- */
-PartConnector.prototype.getViewSettingsAt = function (index) {
-  return this.viewSettings[index]
-}
-
-/**
- * Adds a {@link PartConnectorViewSettings} to this PartConnector on the condition that another {@link PartConnectorViewSettings} with the same name does not already exist
- * @param {PartConnectorViewSettings} viewSettings The {@link PartConnectorViewSettings} to be added
- */
-PartConnector.prototype.setViewSettings = function (viewSettings) {
-  if (!this.hasViewSettings(viewSettings.name)) this.viewSettings.push(viewSettings)
-}
-
-/**
- * Returns whether this PartConnector has a {@link PartConnectorViewSettings} with the given name
- * @param {string} name The given name to search for
- * @return {boolean} Whether this PartConnector has a {@link PartConnectorViewSettings} with the given name
- */
-PartConnector.prototype.hasViewSettings = function (name) {
-  var has = false
-  for (var i = 0; i < this.viewSettings.length; i++) {
-    if (this.viewSettings[i].name === name) {
-      has = true
-      break
+  /**
+   * Returns whether this PartConnector has a {@link PartConnectorViewSettings} with the given name.
+   * @param {string} name The given name to search for.
+   * @return {boolean} Whether this PartConnector has a {@link PartConnectorViewSettings} with the given name.
+   */
+  public hasViewSettings(name: string): boolean {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        return true;
+      }
     }
+    return false;
   }
-  return has
-}
 
-/**
- * Removes the {@link PartConnectorViewSettings} with the given name
- * @param {string} name The name of the {@link PartConnectorViewSettings}
- * @return {boolean} Whether a {@link PartConnectorViewSettings} with the given name was removed
- */
-PartConnector.prototype.removeViewSettings = function (name) {
-  var removed = false
-  for (var i = 0; i < this.viewSettings.length; i++) {
-    if (this.viewSettings[i].name === name) {
-      this.viewSettings.splice(i, 1)
-      removed = true
-      break
+  /**
+   * Removes the {@link PartConnectorViewSettings} with the given name
+   * @param {string} name The name of the {@link PartConnectorViewSettings}
+   * @return {boolean} Whether a {@link PartConnectorViewSettings} with the given name was removed
+   */
+  public removeViewSettings(name: string): boolean {
+    for (const settingItem of this.viewSettings) {
+      if (settingItem.name === name) {
+        this.viewSettings.splice(this.viewSettings.findIndex(x => x.name === name), 1);
+        return true;
+      }
     }
+    return false;
   }
-  return removed
-}
 
-/**
- * Removes the {@link PartConnectorViewSettings} at the given index
- * @param {number} index The index of the {@link PartConnectorViewSettings}
- * @return {boolean} Whether a {@link PartConnectorViewSettings} with the given index was removed
- */
-PartConnector.prototype.removeViewSettingsAt = function (index) {
-  return this.viewSettings.splice(index, 1).length > 0
+  /**
+   * Removes the {@link PartConnectorViewSettings} at the given index
+   * @param {number} index The index of the {@link PartConnectorViewSettings}
+   * @return {boolean} Whether a {@link PartConnectorViewSettings} with the given index was removed
+   */
+  public removeViewSettingsAt(index: number): boolean {
+    return this.viewSettings.splice(index, 1).length > 0;
+  }
 }
 
 /**
