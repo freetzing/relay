@@ -1489,19 +1489,19 @@ export class Sketch implements ISketch {
     for (const moduleObjViewItem of moduleObjViews) {
       const viewName = moduleObjViewItem.$.name.slice(0, -4);
       const viewSettingsParams: {[k: string]: any} = {
-        alignToGrid: this.getOptionalAttribute(moduleObjViewItem, "alignToGrid") === "1",
-        backgroundColor: this.getOptionalAttribute(moduleObjViewItem, "backgroundColor"),
-        gridSize: this.getOptionalAttribute(moduleObjViewItem, "gridSize"),
+        alignToGrid: ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "alignToGrid") === "1",
+        backgroundColor: ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "backgroundColor"),
+        gridSize: ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "gridSize"),
         name: viewName,
-        showGrid: this.getOptionalAttribute(moduleObjViewItem, "showGrid") === "1",
-        viewFromBelow: this.getOptionalAttribute(moduleObjViewItem, "viewFromBelow") === "1",
+        showGrid: ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "showGrid") === "1",
+        viewFromBelow: ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "viewFromBelow") === "1",
       };
       if (viewName === "pcb") {
-        viewSettingsParams.arHoleSize = this.getOptionalAttribute(moduleObjViewItem, "autorouteViaHoleSize");
-        viewSettingsParams.arTraceWidth = this.getOptionalAttribute(moduleObjViewItem, "autorouteTraceWidth");
-        viewSettingsParams.arRingWidth = this.getOptionalAttribute(moduleObjViewItem, "autorouteViaRingThickness");
-        viewSettingsParams.keepoutDRC = this.getOptionalAttribute(moduleObjViewItem, "DRC_Keepout");
-        viewSettingsParams.keepoutGPG = this.getOptionalAttribute(moduleObjViewItem, "GPG_Keepout");
+        viewSettingsParams.arHoleSize = ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "autorouteViaHoleSize");
+        viewSettingsParams.arTraceWidth = ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "autorouteTraceWidth");
+        viewSettingsParams.arRingWidth = ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "autorouteViaRingThickness");
+        viewSettingsParams.keepoutDRC = ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "DRC_Keepout");
+        viewSettingsParams.keepoutGPG = ObjectUtilities.getOptionalAttribute(moduleObjViewItem, "GPG_Keepout");
         viewSettingsData.push(new SketchPCBViewSettings(viewSettingsParams as SketchPCBViewSettings));
       } else {
         viewSettingsData.push(new SketchViewSettings(viewSettingsParams as SketchViewSettings));
@@ -1646,7 +1646,7 @@ export class Sketch implements ISketch {
               geometry: geometryData,
               layer: moduleView.$.layer,
               layerHidden: layerHiddenData,
-              locked: this.getOptionalAttribute(moduleView, "locked") === "true",
+              locked: ObjectUtilities.getOptionalAttribute(moduleView, "locked") === "true",
               name: viewKey.slice(0, -4),
               titleGeometry: titleGeometryData,
               wireExtras: wireExtrasData,
@@ -1682,7 +1682,7 @@ export class Sketch implements ISketch {
               geometry: geometryData,
               layer: moduleView.$.layer,
               layerHidden: layerHiddenData,
-              locked: this.getOptionalAttribute(moduleView, "locked") === "true",
+              locked: ObjectUtilities.getOptionalAttribute(moduleView, "locked") === "true",
               name: viewKey.slice(0, -4),
               titleGeometry: titleGeometryData,
             } as InstanceViewSettings),
@@ -1704,14 +1704,14 @@ export class Sketch implements ISketch {
 
       instancesData.push(
         new Instance({
-          flippedSMD: this.getOptionalAttribute(moduleObjInstanceItem, "flippedSMD") === "true",
+          flippedSMD: ObjectUtilities.getOptionalAttribute(moduleObjInstanceItem, "flippedSMD") === "true",
           localConnectors: localConnectorsData,
           modelIndex: moduleObjInstanceItem.$.modelIndex,
           moduleIdRef: moduleObjInstanceItem.$.moduleIdRef,
           path: moduleObjInstanceItem.$.path,
           properties: propertiesData,
-          text: this.getOptionalValue(moduleObjInstanceItem.text),
-          title: this.getOptionalValue(moduleObjInstanceItem.title),
+          text: ObjectUtilities.getOptionalValue(moduleObjInstanceItem.text),
+          title: ObjectUtilities.getOptionalValue(moduleObjInstanceItem.title),
           viewSettings: subViewSettings,
         } as Instance),
       );
@@ -1724,19 +1724,5 @@ export class Sketch implements ISketch {
       programs: programsData,
       viewSettings: viewSettingsData,
     } as Sketch);
-  }
-
-  private getOptionalValue(object: any): any {
-    if (object) {
-      return object[0]._;
-    }
-    return undefined;
-  }
-
-  private getOptionalAttribute(object: any, attribute: string): any {
-    if (object && object.$) {
-      return object.$[attribute];
-    }
-    return undefined;
   }
 }
