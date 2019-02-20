@@ -4,6 +4,7 @@ import {
     IPartProperty,
     IPartViewSettings,
 } from "../interfaces/part.interface";
+import { ObjectUtilities } from "../utils/object.utils";
 import { Property } from "./global.model";
 
 /**
@@ -1070,263 +1071,162 @@ export class Part {
    * @return {string} This Part as a string of FZP XML
    */
   public toFZP(): string {
-    return "";
+
+    const moduleObj: {[k: string]: any} = {
+      $: { moduleId: this.moduleId },
+      title: this.title,
+      views: {},
+    };
+
+    if (this.version) {
+      moduleObj.version = { _: this.version };
+      if (this.replacedBy) {
+        moduleObj.version.$ = { replacedby: this.replacedBy };
+      }
+    }
+
+    ObjectUtilities.setOptionalValue(moduleObj.$, "fritzingVersion", this.fritzingVersion);
+    ObjectUtilities.setOptionalValue(moduleObj.$, "referenceFile", this.referenceFile);
+    ObjectUtilities.setOptionalValue(moduleObj, "author", this.author);
+    ObjectUtilities.setOptionalValue(moduleObj, "label", this.label);
+    ObjectUtilities.setOptionalValue(moduleObj, "description", this.description);
+    ObjectUtilities.setOptionalValue(moduleObj, "url", this.url);
+    ObjectUtilities.setOptionalValue(moduleObj, "date", this.date);
+    ObjectUtilities.setOptionalValue(moduleObj, "taxonomy", this.taxonomy);
+    ObjectUtilities.setOptionalValue(moduleObj, "language", this.language);
+    ObjectUtilities.setOptionalValue(moduleObj, "family", this.family);
+    ObjectUtilities.setOptionalValue(moduleObj, "variant", this.variant);
+
+    if (this.tags.length > 0) {
+      moduleObj.tags = { tag: [] };
+      for (const tagItem of this.tags) {
+        moduleObj.tags.tag.push({ _: tagItem });
+      }
+    }
+
+    if (this.properties.length > 0) {
+      moduleObj.properties = { property: [] };
+      for (const propertyItem of this.properties) {
+        const moduleProperty: {[k: string]: any} = {
+          $: {
+            name: propertyItem.name,
+            showInLabel: propertyItem.showInLabel,
+          },
+        };
+        ObjectUtilities.setOptionalValue(moduleProperty, "_", propertyItem.value);
+        moduleObj.properties.property.push(moduleProperty);
+      }
+    }
+
+    for (const viewSettingItem of this.viewSettings) {
+      const moduleLayersArray = [];
+      for (const layerItem of viewSettingItem.layers) {
+        moduleLayersArray.push({
+          $: {
+            layerId: layerItem.id,
+            sticky: layerItem.sticky,
+          },
+        });
+      }
+      const moduleLayers: {[k: string]: any} = { layer: moduleLayersArray };
+      if (viewSettingItem.image) {
+        moduleLayers.$ = { image: viewSettingItem.image };
+      }
+      moduleObj.views[viewSettingItem.name + "View"] = {
+        $: {
+          fliphorizontal: viewSettingItem.flipHorizontal,
+          flipvertical: viewSettingItem.flipVertical,
+        },
+        layers: moduleLayers,
+      };
+    }
+    ObjectUtilities.setOptionalValue(moduleObj.views, "defaultUnits", this.defaultUnits);
+
+    if (this.connectors.length > 0) {
+      moduleObj.connectors = {
+        $: { ignoreTerminalPoints: this.ignoreTerminalPoints },
+        connector: [],
+      };
+      for (const connectorItem of this.connectors) {
+        const moduleViews1: {[key: string]: any} = {};
+        for (const viewSettingItem of connectorItem.viewSettings) {
+          const moduleLayers: Array<{[key: string]: any}> = [];
+          for (const layerItem of viewSettingItem.layerSettings) {
+            const moduleLayer: {[key: string]: any} = {
+              $: { layer: layerItem.name, svgId: layerItem.svgId, hybrid: layerItem.disabled },
+            };
+            ObjectUtilities.setOptionalValue(moduleLayer, "terminalId", layerItem.terminalId);
+            ObjectUtilities.setOptionalValue(moduleLayer, "legId", layerItem.legId);
+            moduleLayers.push(moduleLayer);
+          }
+          moduleViews1[viewSettingItem.name + "View"] = {p: moduleLayers};
+        }
+        const moduleConnector: {[key: string]: any} = {
+          $: { id: connectorItem.id, name: connectorItem.name, type: connectorItem.type },
+          views: moduleViews1,
+        };
+        ObjectUtilities.setOptionalValue(moduleConnector.$, "replacedby", connectorItem.replacedBy);
+        ObjectUtilities.setOptionalValue(moduleConnector, "description", connectorItem.description);
+        if (connectorItem.erc) {
+          moduleConnector.erc = { $: {} };
+          ObjectUtilities.setOptionalValue(moduleConnector.erc.$, "etype", connectorItem.erc.type);
+          ObjectUtilities.setOptionalValue(moduleConnector.erc.$, "ignore", connectorItem.erc.ignore);
+          if (connectorItem.erc.voltage) {
+            moduleConnector.erc.voltage = {
+              $: { value: connectorItem.erc.voltage },
+            };
+          }
+          if (connectorItem.erc.current) {
+            moduleConnector.erc.current = {
+              $: { flow: connectorItem.erc.current.flow, valueMax: connectorItem.erc.current.valueMax},
+            };
+          }
+        }
+        moduleObj.connectors.connector.push(moduleConnector);
+      }
+    }
+
+    if (this.buses.length > 0) {
+      moduleObj.buses = { bus: [] };
+      for (const busItem of this.buses) {
+        const moduleConnectors: Array<{[key: string]: any}> = [];
+        for (const connectorItem of busItem.connectorIds) {
+            moduleConnectors.push({ $: { connectorId: connectorItem }});
+        }
+        const moduleBus: {[key: string]: any} = { nodeMember: moduleConnectors };
+        if (busItem.id) {
+          moduleBus.$ = { id: busItem.id };
+        }
+        moduleObj.buses.bus.push(moduleBus);
+      }
+    }
+
+    if (this.subparts.length > 0) {
+      moduleObj.subparts = { subpart: []};
+      for (const subpartItem of this.subparts) {
+        const moduleConnectors: Array<{[key: string]: any}> = [];
+        for (const connectorItem of subpartItem.connectorIds) {
+          moduleConnectors.push({ $: { id: connectorItem }});
+        }
+        moduleObj.subparts.subpart.push({
+          $: {
+            id: subpartItem.id,
+            label: subpartItem.label,
+          },
+          connectors: {
+            connector: moduleConnectors,
+          },
+        });
+      }
+    }
+
+    return new xml2js.Builder().buildObject(({ module: moduleObj }));
   }
 
   private ParseStringData(data: any): Part {
     return new Part(data);
   }
 
-}
-
-/**
- * Returns this Part as a string of FZP XML
- * @return {string} This Part as a string of FZP XML
- */
-Part.prototype.toFZP = function () {
-  var i = 0
-  var j = 0
-  var moduleLayers
-  var viewSetting
-  var layers
-  var layer
-  var moduleConnectors
-  var connectors
-
-  function setOptionalValue (obj, key, value) {
-    if (value) {
-      obj[key] = value
-    }
-  }
-
-  var module = {
-    $: {
-      moduleId: this.moduleId
-    },
-    title: this.title,
-    views: {}
-  }
-  if (this.version) {
-    module.version = {
-      _: this.version
-    }
-    if (this.replacedBy) {
-      module.version.$ = {
-        replacedby: this.replacedBy
-      }
-    }
-  }
-  setOptionalValue(module.$, 'fritzingVersion', this.fritzingVersion)
-  setOptionalValue(module.$, 'referenceFile', this.referenceFile)
-  setOptionalValue(module, 'author', this.author)
-  setOptionalValue(module, 'label', this.label)
-  setOptionalValue(module, 'description', this.description)
-  setOptionalValue(module, 'url', this.url)
-  setOptionalValue(module, 'date', this.date)
-  setOptionalValue(module, 'taxonomy', this.taxonomy)
-  setOptionalValue(module, 'language', this.language)
-  setOptionalValue(module, 'family', this.family)
-  setOptionalValue(module, 'variant', this.variant)
-
-  if (this.tags.length > 0) {
-    module.tags = {
-      tag: []
-    }
-    var moduleTags = module.tags.tag
-    var tags = this.tags
-    for (i = 0; i < tags.length; i++) {
-      moduleTags.push({
-        _: tags[i]
-      })
-    }
-  }
-
-  if (this.properties.length > 0) {
-    module.properties = {
-      property: []
-    }
-    var moduleProperties = module.properties.property
-    var properties = this.properties
-    for (i = 0; i < properties.length; i++) {
-      var property = properties[i]
-      var moduleProperty = {
-        $: {
-          name: property.name,
-          showInLabel: property.showInLabel
-        }
-      }
-      setOptionalValue(moduleProperty, '_', property.value)
-      moduleProperties.push(moduleProperty)
-    }
-  }
-
-  var moduleViews = module.views
-  var viewSettings = this.viewSettings
-  for (i = 0; i < viewSettings.length; i++) {
-    var moduleLayersArray = []
-    viewSetting = viewSettings[i]
-    layers = viewSetting.layers
-    for (j = 0; j < layers.length; j++) {
-      layer = layers[j]
-      moduleLayersArray.push({
-        $: {
-          layerId: layer.id,
-          sticky: layer.sticky
-        }
-      })
-    }
-    moduleLayers = {
-      layer: moduleLayersArray
-    }
-    if (viewSetting.image) {
-      moduleLayers.$ = {
-        image: viewSetting.image
-      }
-    }
-    moduleViews[viewSetting.name + 'View'] = {
-      $: {
-        fliphorizontal: viewSetting.flipHorizontal,
-        flipvertical: viewSetting.flipVertical
-      },
-      layers: moduleLayers
-    }
-  }
-  setOptionalValue(moduleViews, 'defaultUnits', this.defaultUnits)
-
-  if (this.connectors.length > 0) {
-    module.connectors = {
-      $: {
-        ignoreTerminalPoints: this.ignoreTerminalPoints
-      },
-      connector: []
-    }
-    moduleConnectors = module.connectors.connector
-    connectors = this.connectors
-    for (i = 0; i < connectors.length; i++) {
-      var moduleViews1 = {}
-      var connector = connectors[i]
-      var viewSettings1 = connector.viewSettings
-      for (j = 0; j < viewSettings1.length; j++) {
-        moduleLayers = []
-        viewSetting = viewSettings1[j]
-        layers = viewSetting.layerSettings
-        for (var c = 0; c < layers.length; c++) {
-          layer = layers[c]
-          var moduleLayer = {
-            $: {
-              layer: layer.name,
-              svgId: layer.svgId,
-              hybrid: layer.disabled
-            }
-          }
-          setOptionalValue(moduleLayer, 'terminalId', layer.terminalId)
-          setOptionalValue(moduleLayer, 'legId', layer.legId)
-          moduleLayers.push(moduleLayer)
-        }
-        moduleViews1[viewSetting.name + 'View'] = {
-          p: moduleLayers
-        }
-      }
-      var moduleConnector = {
-        $: {
-          id: connector.id,
-          name: connector.name,
-          type: connector.type
-        },
-        views: moduleViews1
-      }
-      setOptionalValue(moduleConnector.$, 'replacedby', connector.replacedby)
-      setOptionalValue(moduleConnector, 'description', connector.description)
-      if (connector.erc) {
-        var erc = connector.erc
-        moduleConnector.erc = {
-          $: {}
-        }
-        var moduleERC = moduleConnector.erc
-        setOptionalValue(moduleERC.$, 'etype', erc.type)
-        setOptionalValue(moduleERC.$, 'ignore', erc.ignore)
-        if (erc.voltage) {
-          moduleERC.voltage = {
-            $: {
-              value: erc.voltage
-            }
-          }
-        }
-        if (erc.current) {
-          var current = erc.current
-          moduleERC.current = {
-            $: {
-              flow: current.flow,
-              valueMax: current.valueMax
-            }
-          }
-        }
-      }
-      moduleConnectors.push(moduleConnector)
-    }
-  }
-
-  if (this.buses.length > 0) {
-    module.buses = {
-      bus: []
-    }
-    var moduleBuses = module.buses.bus
-    var buses = this.buses
-    for (i = 0; i < buses.length; i++) {
-      moduleConnectors = []
-      var bus = buses[i]
-      connectors = bus.connectorIds
-      for (j = 0; j < connectors.length; j++) {
-        moduleConnectors.push({
-          $: {
-            connectorId: connectors[j]
-          }
-        })
-      }
-      var moduleBus = {
-        nodeMember: moduleConnectors
-      }
-      if (bus.id) {
-        moduleBus.$ = {
-          id: bus.id
-        }
-      }
-      moduleBuses.push(moduleBus)
-    }
-  }
-
-  if (this.subparts.length > 0) {
-    module.subparts = {
-      subpart: []
-    }
-    var moduleSubparts = module.subparts.subpart
-    var subparts = this.subparts
-    for (i = 0; i < subparts.length; i++) {
-      moduleConnectors = []
-      var subpart = subparts[i]
-      connectors = subpart.connectorIds
-      for (j = 0; j < connectors.length; j++) {
-        moduleConnectors.push({
-          $: {
-            id: connectors[j]
-          }
-        })
-      }
-      moduleSubparts.push({
-        $: {
-          id: subpart.id,
-          label: subpart.label
-        },
-        connectors: {
-          connector: moduleConnectors
-        }
-      })
-    }
-  }
-
-  return new xml2js.Builder().buildObject(({
-    module: module
-  }))
 }
 
 /**
@@ -1367,25 +1267,25 @@ Part.fromFZP = function (fzp) {
       if (err) {
         reject(err)
       } else {
-        var module = data.module
+        var moduleObj = data.moduleObj
 
-        var moduleVersion = getOptionalValue(module.version)
+        var moduleVersion = getOptionalValue(moduleObj.version)
         var moduleReplacedBy
         if (moduleVersion) {
-          moduleReplacedBy = getOptionalAttribute(module.version[0], 'replacedby')
+          moduleReplacedBy = getOptionalAttribute(moduleObj.version[0], 'replacedby')
         }
 
         var tags = []
-        if (module.tags && module.tags[0].tag) {
-          var moduleTags = module.tags[0].tag
+        if (moduleObj.tags && moduleObj.tags[0].tag) {
+          var moduleTags = moduleObj.tags[0].tag
           for (i = 0; i < moduleTags.length; i++) {
             tags.push(moduleTags[i]._)
           }
         }
 
         var properties = []
-        if (module.properties && module.properties[0].property) {
-          var moduleProperties = module.properties[0].property
+        if (moduleObj.properties && moduleObj.properties[0].property) {
+          var moduleProperties = moduleObj.properties[0].property
           for (i = 0; i < moduleProperties.length; i++) {
             var moduleProperty = moduleProperties[i]
             properties.push(new PartProperty(
@@ -1397,11 +1297,11 @@ Part.fromFZP = function (fzp) {
         }
 
         var viewSettings = []
-        var moduleViewKeys = Object.keys(module.views[0])
+        var moduleViewKeys = Object.keys(moduleObj.views[0])
         for (i = 0; i < moduleViewKeys.length; i++) {
           moduleViewKey = moduleViewKeys[i]
           if (moduleViewKey.endsWith('View')) {
-            moduleView = module.views[0][moduleViewKey][0]
+            moduleView = moduleObj.views[0][moduleViewKey][0]
             moduleLayers = moduleView.layers[0].layer
             layers = []
             for (j = 0; j < moduleLayers.length; j++) {
@@ -1425,9 +1325,9 @@ Part.fromFZP = function (fzp) {
 
         connectors = []
         var ignoreTerminalPoints = false
-        if (module.connectors && module.connectors[0].connector) {
-          moduleConnectors = module.connectors[0].connector
-          ignoreTerminalPoints = getOptionalAttribute(module.connectors[0], 'ignoreTerminalPoints') === 'true'
+        if (moduleObj.connectors && moduleObj.connectors[0].connector) {
+          moduleConnectors = moduleObj.connectors[0].connector
+          ignoreTerminalPoints = getOptionalAttribute(moduleObj.connectors[0], 'ignoreTerminalPoints') === 'true'
           for (i = 0; i < moduleConnectors.length; i++) {
             var viewSettings1 = []
             var moduleConnector = moduleConnectors[i]
@@ -1494,8 +1394,8 @@ Part.fromFZP = function (fzp) {
         }
 
         var buses = []
-        if (module.buses && module.buses[0].bus) {
-          var moduleBuses = module.buses[0].bus
+        if (moduleObj.buses && moduleObj.buses[0].bus) {
+          var moduleBuses = moduleObj.buses[0].bus
           for (i = 0; i < moduleBuses.length; i++) {
             connectors = []
             var moduleBus = moduleBuses[i]
@@ -1513,8 +1413,8 @@ Part.fromFZP = function (fzp) {
         }
 
         var subparts = []
-        if (module['schematic-subparts'] && module['schematic-subparts'][0].subpart) {
-          var moduleSubparts = module['schematic-subparts'][0].subpart
+        if (moduleObj['schematic-subparts'] && moduleObj['schematic-subparts'][0].subpart) {
+          var moduleSubparts = moduleObj['schematic-subparts'][0].subpart
           for (i = 0; i < moduleSubparts.length; i++) {
             connectors = []
             var moduleSubpart = moduleSubparts[i]
@@ -1531,22 +1431,22 @@ Part.fromFZP = function (fzp) {
         }
 
         return resolve(new Part({
-          moduleId: module.$.moduleId,
-          title: module.title[0]._,
-          fritzingVersion: getOptionalAttribute(module, 'fritzingVersion'),
-          referenceFile: getOptionalAttribute(module, 'referenceFile'),
+          moduleId: moduleObj.$.moduleId,
+          title: moduleObj.title[0]._,
+          fritzingVersion: getOptionalAttribute(moduleObj, 'fritzingVersion'),
+          referenceFile: getOptionalAttribute(moduleObj, 'referenceFile'),
           version: moduleVersion,
           replacedBy: moduleReplacedBy,
-          author: getOptionalValue(module.author),
-          label: getOptionalValue(module.label),
-          description: getOptionalValue(module.description),
-          url: getOptionalValue(module.url),
-          date: getOptionalValue(module.date),
-          taxonomy: getOptionalValue(module.taxonomy),
-          language: getOptionalValue(module.language),
-          family: getOptionalValue(module.family),
-          variant: getOptionalValue(module.variant),
-          defaultUnits: getOptionalValue(module.views[0].defaultUnits),
+          author: getOptionalValue(moduleObj.author),
+          label: getOptionalValue(moduleObj.label),
+          description: getOptionalValue(moduleObj.description),
+          url: getOptionalValue(moduleObj.url),
+          date: getOptionalValue(moduleObj.date),
+          taxonomy: getOptionalValue(moduleObj.taxonomy),
+          language: getOptionalValue(moduleObj.language),
+          family: getOptionalValue(moduleObj.family),
+          variant: getOptionalValue(moduleObj.variant),
+          defaultUnits: getOptionalValue(moduleObj.views[0].defaultUnits),
           ignoreTerminalPoints: ignoreTerminalPoints,
           tags: tags,
           properties: properties,
