@@ -58,7 +58,7 @@ export class PartViewSettings implements IPartViewSettings {
     public flipHorizontal: boolean;
     public flipVertical: boolean;
 
-    constructor(params: PartViewSettings) {
+    constructor(params?: PartViewSettings) {
         this.name = params.name;
         this.image = params.image;
         this.layers = params.layers || [];
@@ -213,7 +213,7 @@ export class PartConnectorViewSettings {
   public name: string;
   public layerSettings: PartConnectorLayerSettings[];
 
-  constructor(params: PartConnectorViewSettings) {
+  constructor(params?: PartConnectorViewSettings) {
     this.name = params.name;
     this.layerSettings = params.layerSettings || [];
   }
@@ -311,7 +311,7 @@ export class PartConnector {
   public erc: ERC;
   public viewSettings: PartConnectorViewSettings[];
 
-  constructor(params: PartConnector) {
+  constructor(params?: PartConnector) {
     this.id = params.id;
     this.name = params.name;
     this.type = params.type;
@@ -403,7 +403,7 @@ export class Bus {
   public id: string;
   public connectorIds: string[];
 
-  constructor(params: Bus) {
+  constructor(params?: Bus) {
     this.id = params.id;
     this.connectorIds = params.connectorIds || [];
   }
@@ -476,7 +476,7 @@ export class Subpart {
   public label: string;
   public connectorIds: string[];
 
-  constructor(params: Subpart) {
+  constructor(params?: Subpart) {
     this.id = params.id;
     this.label = params.label;
     this.connectorIds = params.connectorIds || [];
@@ -1224,238 +1224,174 @@ export class Part {
   }
 
   private ParseStringData(data: any): Part {
-    return new Part(data);
-  }
-
-}
-
-/**
- * @static
- * Returns a Promise that resolves with a {@link Part} object converted from the given FZP XML
- * @param {string} fzp A string of FZP XML
- * @return {Promise} A Promise that resolves with a {@link Part} object converted from the given FZP XML
- */
-Part.fromFZP = function (fzp) {
-  function getOptionalValue (object) {
-    if (object) {
-      return object[0]._
+    const moduleObj = data.module;
+    const moduleVersion = ObjectUtilities.getOptionalValue(moduleObj.version);
+    let moduleReplacedBy = null;
+    if (moduleVersion) {
+      moduleReplacedBy = ObjectUtilities.getOptionalAttribute(moduleObj.version[0], "replacedby");
     }
-    return undefined
-  }
 
-  function getOptionalAttribute (object, attribute) {
-    if (object && object.$) {
-      return object.$[attribute]
-    }
-    return undefined
-  }
-
-  return new Promise(function (resolve, reject) {
-    xml2js.parseString(fzp, {
-      explicitCharkey: true
-    }, function (err, data) {
-      var i
-      var j
-      var layers
-      var moduleView
-      var moduleViewKey
-      var moduleLayer
-      var moduleLayers
-      var moduleConnectors
-      var connectors
-
-      if (err) {
-        reject(err)
-      } else {
-        var moduleObj = data.moduleObj
-
-        var moduleVersion = getOptionalValue(moduleObj.version)
-        var moduleReplacedBy
-        if (moduleVersion) {
-          moduleReplacedBy = getOptionalAttribute(moduleObj.version[0], 'replacedby')
-        }
-
-        var tags = []
-        if (moduleObj.tags && moduleObj.tags[0].tag) {
-          var moduleTags = moduleObj.tags[0].tag
-          for (i = 0; i < moduleTags.length; i++) {
-            tags.push(moduleTags[i]._)
-          }
-        }
-
-        var properties = []
-        if (moduleObj.properties && moduleObj.properties[0].property) {
-          var moduleProperties = moduleObj.properties[0].property
-          for (i = 0; i < moduleProperties.length; i++) {
-            var moduleProperty = moduleProperties[i]
-            properties.push(new PartProperty(
-              moduleProperty.$.name,
-              moduleProperty._,
-              moduleProperty.$.showInLabel
-            ))
-          }
-        }
-
-        var viewSettings = []
-        var moduleViewKeys = Object.keys(moduleObj.views[0])
-        for (i = 0; i < moduleViewKeys.length; i++) {
-          moduleViewKey = moduleViewKeys[i]
-          if (moduleViewKey.endsWith('View')) {
-            moduleView = moduleObj.views[0][moduleViewKey][0]
-            moduleLayers = moduleView.layers[0].layer
-            layers = []
-            for (j = 0; j < moduleLayers.length; j++) {
-              moduleLayer = moduleLayers[j]
-              layers.push(new PartLayer(
-                moduleLayer.$.layerId,
-                getOptionalAttribute(moduleLayer, 'sticky') === 'true'
-              ))
-            }
-            viewSettings.push(new PartViewSettings(
-              {
-                name: moduleViewKey.slice(0, -4),
-                image: getOptionalAttribute(moduleView.layers[0], 'image'),
-                layers: layers,
-                flipHorizontal: getOptionalAttribute(moduleView, 'fliphorizontal') === 'true',
-                flipVertical: getOptionalAttribute(moduleView, 'flipvertical') === 'true'
-              }
-            ))
-          }
-        }
-
-        connectors = []
-        var ignoreTerminalPoints = false
-        if (moduleObj.connectors && moduleObj.connectors[0].connector) {
-          moduleConnectors = moduleObj.connectors[0].connector
-          ignoreTerminalPoints = getOptionalAttribute(moduleObj.connectors[0], 'ignoreTerminalPoints') === 'true'
-          for (i = 0; i < moduleConnectors.length; i++) {
-            var viewSettings1 = []
-            var moduleConnector = moduleConnectors[i]
-            var moduleViewKeys1 = Object.keys(moduleConnector.views[0])
-            for (j = 0; j < moduleViewKeys1.length; j++) {
-              layers = []
-              moduleViewKey = moduleViewKeys1[j]
-              moduleView = moduleConnector.views[0][moduleViewKey][0]
-              moduleLayers = moduleView.p
-              if (moduleLayers) {
-                for (var c = 0; c < moduleLayers.length; c++) {
-                  moduleLayer = moduleLayers[c]
-                  layers.push(new PartConnectorLayerSettings(
-                    {
-                      name: moduleLayer.$.layer,
-                      svgId: moduleLayer.$.svgId,
-                      terminalId: moduleLayer.$.terminalId,
-                      legId: moduleLayer.$.legId,
-                      disabled: moduleLayer.$.hybrid
-                    }
-                  ))
-                }
-              }
-              viewSettings1.push(new PartConnectorViewSettings(
-                moduleViewKey.slice(0, -4),
-                layers
-              ))
-            }
-            var erc
-            if (moduleConnector.erc && moduleConnector.erc[0]) {
-              var moduleERC = moduleConnector.erc[0]
-              var voltage
-              if (moduleERC.voltage && moduleERC.voltage[0]) {
-                voltage = moduleERC.voltage[0].$.value
-              }
-              var current
-              if (moduleERC.current && moduleERC.current[0]) {
-                var moduleCurrent = moduleERC.current[0]
-                current = new Current(
-                  getOptionalAttribute(moduleCurrent, 'flow'),
-                  getOptionalAttribute(moduleCurrent, 'valueMax')
-                )
-              }
-              erc = new ERC(
-                getOptionalAttribute(moduleERC, 'etype'),
-                voltage,
-                current,
-                getOptionalAttribute(moduleERC, 'ignore')
-
-              )
-            }
-            connectors.push(new PartConnector(
-              {
-                id: moduleConnector.$.id,
-                name: moduleConnector.$.name,
-                type: moduleConnector.$.type,
-                description: getOptionalValue(moduleConnector.description),
-                replacedBy: moduleConnector.$.replacedby,
-                erc: erc,
-                viewSettings: viewSettings1
-              }
-            ))
-          }
-        }
-
-        var buses = []
-        if (moduleObj.buses && moduleObj.buses[0].bus) {
-          var moduleBuses = moduleObj.buses[0].bus
-          for (i = 0; i < moduleBuses.length; i++) {
-            connectors = []
-            var moduleBus = moduleBuses[i]
-            moduleConnectors = moduleBus.nodeMember
-            if (moduleConnectors) {
-              for (j = 0; j < moduleConnectors.length; j++) {
-                connectors.push(moduleConnectors[j].$.connectorId)
-              }
-            }
-            buses.push(new Bus(
-              getOptionalAttribute(moduleBus, 'id'),
-              connectors
-            ))
-          }
-        }
-
-        var subparts = []
-        if (moduleObj['schematic-subparts'] && moduleObj['schematic-subparts'][0].subpart) {
-          var moduleSubparts = moduleObj['schematic-subparts'][0].subpart
-          for (i = 0; i < moduleSubparts.length; i++) {
-            connectors = []
-            var moduleSubpart = moduleSubparts[i]
-            moduleConnectors = moduleSubpart.connectors[0].connector
-            for (j = 0; j < moduleConnectors.length; j++) {
-              connectors.push(moduleConnectors[j].$.id)
-            }
-            subparts.push(new Subpart(
-              moduleSubpart.$.id,
-              moduleSubpart.$.label,
-              connectors
-            ))
-          }
-        }
-
-        return resolve(new Part({
-          moduleId: moduleObj.$.moduleId,
-          title: moduleObj.title[0]._,
-          fritzingVersion: getOptionalAttribute(moduleObj, 'fritzingVersion'),
-          referenceFile: getOptionalAttribute(moduleObj, 'referenceFile'),
-          version: moduleVersion,
-          replacedBy: moduleReplacedBy,
-          author: getOptionalValue(moduleObj.author),
-          label: getOptionalValue(moduleObj.label),
-          description: getOptionalValue(moduleObj.description),
-          url: getOptionalValue(moduleObj.url),
-          date: getOptionalValue(moduleObj.date),
-          taxonomy: getOptionalValue(moduleObj.taxonomy),
-          language: getOptionalValue(moduleObj.language),
-          family: getOptionalValue(moduleObj.family),
-          variant: getOptionalValue(moduleObj.variant),
-          defaultUnits: getOptionalValue(moduleObj.views[0].defaultUnits),
-          ignoreTerminalPoints: ignoreTerminalPoints,
-          tags: tags,
-          properties: properties,
-          viewSettings: viewSettings,
-          connectors: connectors,
-          buses: buses,
-          subparts: subparts
-        }))
+    const tagsData = [];
+    if (moduleObj.tags && moduleObj.tags[0].tag) {
+      const moduleObjTags = moduleObj.tags[0].tag;
+      for (const moduleObjTagItem of moduleObjTags) {
+        tagsData.push(moduleObjTagItem._);
       }
-    })
-  })
+    }
+
+    const propertiesData: PartProperty[] = [];
+    if (moduleObj.properties && moduleObj.properties[0].property) {
+      const moduleObjProperties = moduleObj.properties[0].property;
+      for (const moduleObjPropertyItem of moduleObjProperties) {
+        propertiesData.push(new PartProperty({
+          name: moduleObjPropertyItem.$.name,
+          showInLabel: moduleObjPropertyItem.$.showInLabel,
+          value: moduleObjPropertyItem._,
+        }));
+      }
+    }
+
+    const viewSettingsData: PartViewSettings[] = [];
+    for (const viewKey of Object.keys(moduleObj.views[0])) {
+      if (viewKey.endsWith("View")) {
+        const moduleView = moduleObj.views[0][viewKey][0];
+        const moduleLayers = moduleView.layers[0].layer;
+        const layersData: PartLayer[] = [];
+        for (const layerItem of moduleLayers) {
+          layersData.push(new PartLayer({
+            id: layerItem.$.layerId,
+            sticky: ObjectUtilities.getOptionalAttribute(layerItem, "sticky") === "true",
+          }));
+        }
+        viewSettingsData.push(new PartViewSettings({
+          flipHorizontal: ObjectUtilities.getOptionalAttribute(moduleView, "fliphorizontal") === "true",
+          flipVertical: ObjectUtilities.getOptionalAttribute(moduleView, "flipvertical") === "true",
+          image: ObjectUtilities.getOptionalAttribute(moduleView.layers[0], "image"),
+          layers: layersData,
+          name: viewKey.slice(0, -4),
+        } as PartViewSettings));
+      }
+    }
+
+    // Default setting for ignoreTerminalPoints property.
+    let ignoreTerminalPointsSetting = false;
+
+    const connectorsData: PartConnector[] = [];
+    if (moduleObj.connectors && moduleObj.connectors[0].connector) {
+      const moduleConnectors = moduleObj.connectors[0].connector;
+      ignoreTerminalPointsSetting = ObjectUtilities.getOptionalAttribute(moduleObj.connectors[0], "ignoreTerminalPoints") === "true";
+      for (const connectorItem of moduleConnectors) {
+        const subviewSettingsData: PartConnectorViewSettings[] = [];
+        for (const subviewKey of Object.keys(connectorItem.views[0])) {
+          const subLayersData: PartConnectorLayerSettings[] = [];
+          const moduleSubview = connectorItem.views[0][subviewKey][0];
+          // moduleSubview.p is supposed to be moduleLayers, but still not clear to me.
+          if (moduleSubview.p) {
+            for (const moduleSubviewItem of moduleSubview.p) {
+              subLayersData.push(new PartConnectorLayerSettings({
+                disabled: moduleSubviewItem.$.hybrid,
+                legId: moduleSubviewItem.$.legId,
+                name: moduleSubviewItem.$.layer,
+                svgId: moduleSubviewItem.$.svgId,
+                terminalId: moduleSubviewItem.$.terminalId,
+              }));
+            }
+          }
+          subviewSettingsData.push(new PartConnectorViewSettings({
+            layerSettings: subLayersData,
+            name: subviewKey.slice(0, -4),
+          } as PartConnectorViewSettings));
+        }
+
+        let ercData: ERC = null;
+        if (connectorItem.erc && connectorItem.erc[0]) {
+          const moduleERC = connectorItem.erc[0];
+          let voltageData = null;
+          let currentData: Current = null;
+          if (moduleERC.voltage && moduleERC.voltage[0]) {
+            voltageData = moduleERC.voltage[0];
+          }
+          if (moduleERC.current && moduleERC.current[0]) {
+            currentData = new Current({
+              flow: ObjectUtilities.getOptionalAttribute(moduleERC.current[0], "flow"),
+              valueMax: ObjectUtilities.getOptionalAttribute(moduleERC.current[0], "valueMax"),
+            });
+          }
+          ercData = new ERC({
+            current: currentData,
+            ignore: ObjectUtilities.getOptionalAttribute(moduleERC, "ignore"),
+            type: ObjectUtilities.getOptionalAttribute(moduleERC, "etype"),
+            voltage: voltageData,
+          });
+        }
+        connectorsData.push(new PartConnector({
+            description: ObjectUtilities.getOptionalValue(connectorItem.description),
+            erc: ercData,
+            id: connectorItem.$.id,
+            name: connectorItem.$.name,
+            replacedBy: connectorItem.$.replacedby,
+            type: connectorItem.$.type,
+            viewSettings: subviewSettingsData,
+        } as PartConnector));
+      }
+    }
+
+    const busesData: Bus[] = [];
+    if (moduleObj.buses && moduleObj.buses[0].bus) {
+      const moduleBuses = moduleObj.buses[0].bus;
+      for (const busItem of moduleBuses) {
+        const connectorsBusData = [];
+        if (busItem.nodeMember) {
+          for (const nodeItem of busItem.nodeMember) {
+            connectorsBusData.push(nodeItem.$.connectorId);
+          }
+        }
+        busesData.push(new Bus({
+          connectorIds: connectorsBusData,
+          id: ObjectUtilities.getOptionalAttribute(busItem, "id"),
+        } as Bus));
+      }
+    }
+
+    const subpartsData: Subpart[] = [];
+    if (moduleObj["schematic-subparts"] && moduleObj["schematic-subparts"][0].subpart) {
+      const moduleSubparts = moduleObj["schematic-subparts"][0].subpart;
+      for (const subpartItem of moduleSubparts) {
+        const connectorsSubPartData = [];
+        for (const connectorItem of subpartItem.connectors[0].connector) {
+          connectorsSubPartData.push(connectorItem.$.id);
+        }
+        subpartsData.push(new Subpart({
+          connectorIds: connectorsSubPartData,
+          id: subpartItem.$.id,
+          label: subpartItem.$.label,
+        } as Subpart));
+      }
+    }
+    return new Part({
+      author: ObjectUtilities.getOptionalValue(moduleObj.author),
+      buses: busesData,
+      connectors: connectorsData,
+      date: ObjectUtilities.getOptionalValue(moduleObj.date),
+      defaultUnits: ObjectUtilities.getOptionalValue(moduleObj.views[0].defaultUnits),
+      description: ObjectUtilities.getOptionalValue(moduleObj.description),
+      family: ObjectUtilities.getOptionalValue(moduleObj.family),
+      fritzingVersion: ObjectUtilities.getOptionalAttribute(moduleObj, "fritzingVersion"),
+      ignoreTerminalPoints: ignoreTerminalPointsSetting,
+      label: ObjectUtilities.getOptionalValue(moduleObj.label),
+      language: ObjectUtilities.getOptionalValue(moduleObj.language),
+      moduleId: moduleObj.$.moduleId,
+      properties: propertiesData,
+      referenceFile: ObjectUtilities.getOptionalAttribute(moduleObj, "referenceFile"),
+      replacedBy: moduleReplacedBy,
+      subparts: subpartsData,
+      tags: tagsData,
+      taxonomy: ObjectUtilities.getOptionalValue(moduleObj.taxonomy),
+      title: moduleObj.title[0]._,
+      url: ObjectUtilities.getOptionalValue(moduleObj.url),
+      variant: ObjectUtilities.getOptionalValue(moduleObj.variant),
+      version: moduleVersion,
+      viewSettings: viewSettingsData,
+    } as Part);
+  }
 }
