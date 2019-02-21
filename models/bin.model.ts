@@ -26,6 +26,40 @@ export class PartBin {
     return bin.toFZB();
   }
 
+  /**
+   * @static
+   * Returns a Promise that resolves with a {@link PartBin} object converted from the given zip file buffer.
+   * @param {Buffer} fzb A FZB zip file buffer.
+   * @return {Promise} A Promise that resolves with a {@link PartBin} object converted from the given zip file buffer.
+   */
+  public static fromFZB(fzb: Buffer): Promise<PartBin> {
+    return new Promise((resolve, reject) => {
+      const unzipped = new ADMZip(fzb);
+      const entries = unzipped.getEntries();
+      const parts = new PartBin();
+      const promises = [];
+      for (const entryItem of entries) {
+        promises.push(new Promise((subresolve, subreject) => {
+          unzipped.readAsTextAsync(entryItem, (data: string) => {
+            if (data !== "") {
+              parts[entryItem.entryName.split(".")[0]] = Part.fromFZP(data);
+              subresolve();
+            } else {
+              subreject(new Error('There was an error while reading "' + entryItem.entryName + '" from the FZB file.'));
+            }
+          });
+        }));
+      }
+      Promise.all(promises)
+        .then(() => {
+          resolve(new PartBin(parts));
+        })
+        .catch((err: any) => {
+          reject(err);
+        });
+    });
+  }
+
   public parts: PartReference;
 
   constructor(params?: PartBin) {
@@ -80,37 +114,4 @@ export class PartBin {
     return fzb.toBuffer();
   }
 
-  /**
-   * @static
-   * Returns a Promise that resolves with a {@link PartBin} object converted from the given zip file buffer.
-   * @param {Buffer} fzb A FZB zip file buffer.
-   * @return {Promise} A Promise that resolves with a {@link PartBin} object converted from the given zip file buffer.
-   */
-  public fromFZB(fzb: Buffer): Promise<PartBin> {
-    return new Promise((resolve, reject) => {
-      const unzipped = new ADMZip(fzb);
-      const entries = unzipped.getEntries();
-      const parts = new PartBin();
-      const promises = [];
-      for (const entryItem of entries) {
-        promises.push(new Promise((subresolve, subreject) => {
-          unzipped.readAsTextAsync(entryItem, (data: string) => {
-            if (data !== "") {
-              parts[entryItem.entryName.split(".")[0]] = Part.fromFZP(data);
-              subresolve();
-            } else {
-              subreject(new Error('There was an error while reading "' + entryItem.entryName + '" from the FZB file.'));
-            }
-          });
-        }));
-      }
-      Promise.all(promises)
-        .then(() => {
-          resolve(new PartBin(parts));
-        })
-        .catch((err: any) => {
-          reject(err);
-        });
-    });
-  }
 }
