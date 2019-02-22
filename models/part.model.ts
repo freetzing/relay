@@ -1,9 +1,4 @@
 import xml2js = require("xml2js");
-import {
-    IPartLayer,
-    IPartProperty,
-    IPartViewSettings,
-} from "../interfaces/part.interface";
 import { ObjectUtilities } from "../utils/object.utils";
 import { Property } from "./global.model";
 

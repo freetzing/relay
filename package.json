@@ -3,6 +3,9 @@
   "version": "0.6.0",
   "description": "The Fritzing Javascript library",
   "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": "https://github.com/fritzin/fritzing-js",
   "license": "GPL-3.0",
   "author": "Max Karpawich <max.karpawich@gmail.com>",

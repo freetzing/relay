@@ -1,4 +1,4 @@
-import ADMZip from "adm-zip";
+import ADMZip = require("adm-zip");
 import { PartBin } from "./bin.model";
 import { Part } from "./part.model";
 import { Sketch } from "./sketch.model";

@@ -1,5 +1,3 @@
-import { IPoint, IProperty } from "../interfaces/global.interface";
-
 /**
  * An arbitrary string property
  * @param {string} name The name of this Property

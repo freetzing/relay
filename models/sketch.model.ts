@@ -1,25 +1,4 @@
 import xml2js = require("xml2js");
-import {
-  IBezier,
-  IBoard,
-  IGeometry,
-  IInstance,
-  IInstanceConnector,
-  IInstanceConnectorReference,
-  IInstanceViewSettings,
-  ILocalConnector,
-  IPointBezierPair,
-  IProgram,
-  ISketch,
-  ISketchPCBViewSettings,
-  ISketchViewSettings,
-  ITitleGeometry,
-  ITransform,
-  ITransformGeometry,
-  IWireExtras,
-  IWireGeometry,
-  IWireInstanceViewSettings,
-} from "../interfaces/sketch.interface";
 import { ObjectUtilities } from "../utils/object.utils";
 import { Point, Property } from "./global.model";
 

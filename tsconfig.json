@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
+        "lib": ["es6", "dom"],
         "outDir": "build",
-        "allowJs": true,
+        "allowJs": false,
         "target": "es5",
         "plugins": [
             {
@@ -17,9 +18,7 @@
     },
     "exclude": [
         "node_modules",
-        "build"
+        "build",
+        "test"
     ],
-    "include": [
-        "./lib/**/*"
-    ]
 }

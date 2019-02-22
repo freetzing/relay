@@ -1,4 +1,4 @@
-import ADMZip from "adm-zip";
+import ADMZip = require("adm-zip");
 import { Part } from "./part.model";
 
 export class PartReference {

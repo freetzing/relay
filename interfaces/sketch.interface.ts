@@ -1,26 +1,18 @@
-import {
-  Geometry,
-  InstanceConnector,
-  InstanceViewSettings,
-  TitleGeometry,
-} from "../models/sketch.model";
-import { IPoint, IProperty } from "./global.interface";
-
-export interface IBezier {
+interface IBezier {
   cp0: IPoint;
   cp1: IPoint;
 }
 
-export interface IPointBezierPair {
+interface IPointBezierPair {
   point: IPoint;
   bezier: IBezier;
 }
 
-export interface IGeometry extends IPoint {
+interface IGeometry extends IPoint {
   z: number;
 }
 
-export interface ITransform {
+interface ITransform {
   m11: number;
   m12: number;
   m13: number;
@@ -32,11 +24,11 @@ export interface ITransform {
   m33: number;
 }
 
-export interface ITransformGeometry extends IGeometry {
+interface ITransformGeometry extends IGeometry {
   transform: ITransform;
 }
 
-export interface IWireGeometry extends IGeometry {
+interface IWireGeometry extends IGeometry {
   x1: number;
   x2: number;
   y1: number;
@@ -44,7 +36,7 @@ export interface IWireGeometry extends IGeometry {
   wireFlags: number;
 }
 
-export interface ITitleGeometry extends IGeometry {
+interface ITitleGeometry extends IGeometry {
   visible: boolean;
   offsetX: number;
   offsetY: number;
@@ -53,13 +45,13 @@ export interface ITitleGeometry extends IGeometry {
   visibleProperties: string[];
 }
 
-export interface IInstanceConnectorReference {
+interface IInstanceConnectorReference {
   id: string;
   modelIndex: number;
   layer: string;
 }
 
-export interface IInstanceConnector {
+interface IInstanceConnector {
   id: string;
   layer: string;
   geometry: IGeometry;
@@ -67,18 +59,18 @@ export interface IInstanceConnector {
   connectsTo: IInstanceConnectorReference[];
 }
 
-export interface IInstanceViewSettings {
+interface IInstanceViewSettings {
   name: string;
   layer: string;
-  geometry: Geometry;
-  titleGeometry: TitleGeometry;
-  connectors: InstanceConnector[];
+  geometry: IGeometry;
+  titleGeometry: ITitleGeometry;
+  connectors: IInstanceConnector[];
   bottom: boolean;
   locked: boolean;
   layerHidden: boolean;
 }
 
-export interface IWireExtras {
+interface IWireExtras {
   mils: number;
   color: string;
   opacity: number;
@@ -86,35 +78,35 @@ export interface IWireExtras {
   bezier: IBezier;
 }
 
-export interface IWireInstanceViewSettings {
+interface IWireInstanceViewSettings {
   wireExtras: IWireExtras;
 }
 
-export interface ILocalConnector {
+interface ILocalConnector {
   id: string;
   name: string;
 }
 
-export interface IInstance {
+interface IInstance {
   moduleIdRef: string;
   modelIndex: string;
   path: string;
   properties: IProperty[] | any[];
   title: string;
-  viewSettings: InstanceViewSettings[] | any[];
+  viewSettings: IInstanceViewSettings[] | any[];
   text: string;
   flippedSMD: boolean;
   localConnectors: ILocalConnector[] | any[];
 }
 
-export interface IProgram {
+interface IProgram {
   pid: string;
   language: string;
   author: string;
   path: string;
 }
 
-export interface IBoard {
+interface IBoard {
   moduleId: string;
   title: string;
   instance: string;
@@ -122,7 +114,7 @@ export interface IBoard {
   height: string;
 }
 
-export interface ISketchViewSettings {
+interface ISketchViewSettings {
   name: string;
   backgroundColor: string;
   gridSize: string;
@@ -131,7 +123,7 @@ export interface ISketchViewSettings {
   viewFromBelow: boolean;
 }
 
-export interface ISketchPCBViewSettings extends ISketchViewSettings {
+interface ISketchPCBViewSettings extends ISketchViewSettings {
   arHoleSize: string;
   arTraceWidth: string;
   arRingWidth: string;
@@ -139,7 +131,7 @@ export interface ISketchPCBViewSettings extends ISketchViewSettings {
   keepoutGPG: string;
 }
 
-export interface ISketch {
+interface ISketch {
   fritzingVersion: string;
   programs: IProgram[];
   boards: IBoard[];

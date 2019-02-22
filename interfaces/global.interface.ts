@@ -1,9 +1,9 @@
-export interface IProperty {
+interface IProperty {
     name: string;
     value: string;
 }
 
-export interface IPoint {
+interface IPoint {
     x: number;
     y: number;
 }

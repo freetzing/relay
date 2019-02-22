@@ -1,15 +1,13 @@
-import { IProperty } from "./global.interface";
-
-export interface IPartProperty extends IProperty {
+interface IPartProperty extends IProperty {
     showInLabel: boolean;
 }
 
-export interface IPartLayer {
+interface IPartLayer {
     id: string;
     sticky: boolean;
 }
 
-export interface IPartViewSettings {
+interface IPartViewSettings {
     name: string;
     image: string;
     layers: IPartLayer[];
