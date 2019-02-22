@@ -18,6 +18,11 @@
  * Based on work by Paul Vollmer
  */
 
+/**
+ * @external Promise
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise}
+ */
+
 'use strict'
 
 const { Property, Point } = require('./lib/global')
