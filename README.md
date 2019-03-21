@@ -11,15 +11,7 @@
 
 ## Under Development
 
-This branch is home to any nightly changes that we push as we prepare for release.
-
-#### Milestones
-- ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/part.js))
-- ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/sketch.js))
-- ~~bin module~~ ✅ ([completed 2.11.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/bin.js))
-- ~~bundle module~~ ✅ ([completed 2.12.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/bundle.js))
-- testing
-- release
+This branch is home to any nightly changes that we push as we prepare for release. **Go look out the [pre-release project](https://github.com/orgs/freetzing/projects/2) to see our progress!**
 
 ## Contributing
 

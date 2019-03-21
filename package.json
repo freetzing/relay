@@ -1,11 +1,8 @@
 {
   "name": "fritzing-js",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "The Fritzing Javascript library",
   "main": "index.js",
-  "scripts": {
-    "build": "tsc"
-  },
   "repository": "https://github.com/fritzin/fritzing-js",
   "license": "GPL-3.0",
   "author": "Max Karpawich <max.karpawich@gmail.com>",
@@ -26,9 +23,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@types/adm-zip": "^0.4.32",
-    "@types/node": "^11.9.4",
-    "@types/xml2js": "^0.4.3",
     "adm-zip": "^0.4.11",
     "xml2js": "^0.4.19"
   },
@@ -40,8 +34,6 @@
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.1.0",
-    "tslint": "^5.12.1",
-    "typescript": "^3.3.3",
     "jest": "^24.1.0",
     "jsdoc": "^3.5.5"
   }
