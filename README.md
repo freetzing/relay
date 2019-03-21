@@ -9,17 +9,9 @@
 
 -------------------------------------------------------------
 
-## Under Development
+## The TypeScript branch
 
-This branch is home to any nightly changes that we push as we prepare for release.
-
-#### Milestones
-- ~~parts module~~ ✅ ([completed 2.9.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/part.js))
-- ~~sketch module~~ ✅ ([completed 2.10.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/sketch.js))
-- ~~bin module~~ ✅ ([completed 2.11.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/bin.js))
-- ~~bundle module~~ ✅ ([completed 2.12.2019](https://github.com/freetzing/fritzing-js/blob/v1.0.0/lib/bundle.js))
-- testing
-- release
+**This branch is home to the TypeScript version of the library.** Any development of this branch has been frozen until v1.0.0 of the Fritzing library is deployed to npm.
 
 ## Contributing
 
