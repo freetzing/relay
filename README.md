@@ -13,7 +13,7 @@
 
 As of this writing, the library has transitioned from `stable` to `development` as we work on modularizing, documenting, and expanding it for official release on `npm`. You can still find the old version in [Release v0.2.0](https://github.com/freetzing/fritzing-js/releases/tag/v0.2.0), complete with basic examples and supportive of *all* Fritzing data types.
 
-Nightly changes can be found over at the [v1.0.0](https://github.com/freetzing/fritzing-js/tree/v1.0.0) as we prepare for release.
+Nightly changes can be found over at the [development](https://github.com/freetzing/fritzing-js/tree/dev) branch as we prepare for release.
 
 ## License
 
