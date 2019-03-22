@@ -25,13 +25,42 @@
 
 'use strict'
 
-const { Property, Point } = require('./lib/global')
+var { Builder } = require('./lib/builder')
+
+/**
+ * A shortcut for {@link Builder#from}
+ * @see {@link Builder#from}
+ * @returns {Builder} A {@link Builder} with the given **from** configuration
+ */
+var from = function (format, dataType) {
+  return new Builder().from(format, dataType)
+}
+
+/**
+ * A shortcut for {@link Builder#to}
+ * @see {@link Builder#to}
+ * @returns {Builder} A {@link Builder} with the given **to** configuration
+ */
+var to = function (format) {
+  return new Builder().to(format)
+}
+
+/**
+ * A shortcut for {@link Builder#data}
+ * @see {@link Builder#data}
+ * @returns {Builder} A {@link Builder} with the given **data** configuration
+ */
+var data = function (data) {
+  return new Builder().data(data)
+}
 
 module.exports = {
   sketch: require('./lib/sketch'),
   part: require('./lib/part'),
   bin: require('./lib/bin'),
   bundle: require('./lib/bundle'),
-  Property: Property,
-  Point: Point
+  global: require('./lib/global'),
+  from: from,
+  to: to,
+  data: data
 }
