@@ -32,8 +32,17 @@ var { Builder } = require('./lib/builder')
  * @see {@link Builder#from}
  * @returns {Builder} A {@link Builder} with the given **from** configuration
  */
-var from = function (format, dataType) {
-  return new Builder().from(format, dataType)
+var from = function (format) {
+  return new Builder().from(format)
+}
+
+/**
+ * A shortcut for {@link Builder#type}
+ * @see {@link Builder#type}
+ * @returns {Builder} A {@link Builder} with the given **type** configuration
+ */
+var type = function (type) {
+  return new Builder().type(type)
 }
 
 /**
@@ -55,12 +64,13 @@ var data = function (data) {
 }
 
 module.exports = {
-  sketch: require('./lib/sketch'),
-  part: require('./lib/part'),
-  bin: require('./lib/bin'),
-  bundle: require('./lib/bundle'),
-  global: require('./lib/global'),
+  sketch: require('./lib/fritzing/sketch'),
+  part: require('./lib/fritzing/part'),
+  bin: require('./lib/fritzing/bin'),
+  bundle: require('./lib/fritzing/bundle'),
+  global: require('./lib/fritzing/global'),
   from: from,
+  type: type,
   to: to,
   data: data
 }
