@@ -11,7 +11,7 @@
 
 ## Under Development
 
-This branch is home to any nightly changes that we push as we prepare for release. **Go look out the [pre-release project](https://github.com/orgs/freetzing/projects/2) to see our progress!**
+Development on this branch has been frozen while we prepare to release **v1.0.0** over at the [development](https://github.com/freetzing/relay/tree/dev) branch.For nightly updates, you can check out our work over there!
 
 ## Contributing
 
