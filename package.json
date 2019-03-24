@@ -1,9 +1,9 @@
 {
-  "name": "fritzing-js",
+  "name": "relay",
   "version": "0.7.0",
-  "description": "The Fritzing Javascript library",
+  "description": "The Javascript library for circuit data",
   "main": "index.js",
-  "repository": "https://github.com/fritzin/fritzing-js",
+  "repository": "https://github.com/freetzing/relay",
   "license": "GPL-3.0",
   "author": "Max Karpawich <max.karpawich@gmail.com>",
   "contributors": [
