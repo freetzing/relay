@@ -1,8 +1,5 @@
 # Relay
 
-![](https://img.shields.io/badge/CODE%20STYLE-STANDARD-d73526.svg?longCache=true&style=flat-square)
-![](https://img.shields.io/badge/VERSION-0.6.0-c6af16.svg?longCache=true&style=flat-square)
-
 **The Javascript library for circuit data conversion.**
 
  Easily convert circuit data into your favorite format.
