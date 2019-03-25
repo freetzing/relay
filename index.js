@@ -68,7 +68,7 @@ module.exports = {
   part: require('./lib/fritzing/part'),
   bin: require('./lib/fritzing/bin'),
   bundle: require('./lib/fritzing/bundle'),
-  global: require('./lib/fritzing/global'),
+  global: require('./lib/global'),
   from: from,
   type: type,
   to: to,
