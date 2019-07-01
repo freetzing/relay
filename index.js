@@ -64,11 +64,11 @@ var data = function (data) {
 }
 
 module.exports = {
-  sketch: require('./lib/fritzing/sketch'),
-  part: require('./lib/fritzing/part'),
-  bin: require('./lib/fritzing/bin'),
-  bundle: require('./lib/fritzing/bundle'),
-  global: require('./lib/global'),
+  sketch: require('./lib/sketch'),
+  part: require('./lib/part'),
+  bin: require('./lib/bin'),
+  bundle: require('./lib/bundle'),
+  global: require('./lib/shared'),
   from: from,
   type: type,
   // to: to,
