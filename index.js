@@ -45,14 +45,14 @@ var type = function (type) {
   return new Builder().type(type)
 }
 
-/**
- * A shortcut for {@link Builder#to}
- * @see {@link Builder#to}
- * @returns {Builder} A {@link Builder} with the given **to** configuration
- */
-var to = function (format) {
-  return new Builder().to(format)
-}
+// /**
+//  * A shortcut for {@link Builder#to}
+//  * @see {@link Builder#to}
+//  * @returns {Builder} A {@link Builder} with the given **to** configuration
+//  */
+// var to = function (format) {
+//   return new Builder().to(format)
+// }
 
 /**
  * A shortcut for {@link Builder#data}
@@ -71,6 +71,6 @@ module.exports = {
   global: require('./lib/global'),
   from: from,
   type: type,
-  to: to,
+  // to: to,
   data: data
 }
