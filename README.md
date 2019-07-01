@@ -1,6 +1,6 @@
-# Relay
+# relay
 
-`Relay` is a JavaScript library for the conversion and manipulation of Fritzing data.
+`relay` is a JavaScript library for the conversion and manipulation of Fritzing data.
 
 ## Installation
 
