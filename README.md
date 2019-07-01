@@ -1,6 +1,6 @@
 # Relay
 
-`Relay` is a JavaScript library for the conversion and manipulation of Fritzing data. It supports *all* of the Fritzing file types: **Sketches** (.fz), **Parts** (.fzp), **Part Bins** (.fzb), and **Bundles** (.fzz, .fzpz, .fzbz).
+`Relay` is a JavaScript library for the conversion and manipulation of Fritzing data. It supports *all* of the Fritzing file types: Sketches, Parts, Part Bins and Bundles.
 
 ## Installation
 
