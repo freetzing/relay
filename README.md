@@ -45,7 +45,7 @@ Originally, the central task of the Freetzing project and `Relay` was to build a
 
 While the article was accurate at the time, much has changed since. Most notably, AISLER (the company behind [Fritzing Fab](https://aisler.net/partners/fritzing)) hired a part-time developer to repair the current Fritzing codebase.
 
-**With these changes in mind**, the Freetzing project has refocused its original goal to support this new wave of development. We are now developing a Parts Editor! As a first step, we developed `Relay` so that anyone could start their own project with Fritzing data and JavaScript. Enjoy!
+**With these changes in mind**, the Freetzing project has refocused its original goal to support this new wave of development. We are now developing a Parts Editor! As a first step, we developed `relay` so that anyone could start their own project with Fritzing data and JavaScript. Enjoy!
 
 ## Contributing
 
