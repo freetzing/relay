@@ -37,7 +37,7 @@ fs.readFile("sketch.fz", (err, fzXML) => {
 
 ## Documentation
 
-[Click here](https://freetzing.github.io/relay) to go to the library documentation.
+~~[Click here](https://freetzing.github.io/relay) to go to the library documentation.~~
 
 ## History
 
