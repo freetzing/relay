@@ -13,7 +13,7 @@ yarn add fz-relay
 ## Usage
 
 ```javascript
-const Relay = require('fz-relay')
+const relay = require('fz-relay')
 const fs = require('fs')
 
 
@@ -21,7 +21,7 @@ fs.readFile("sketch.fz", (err, fzXML) => {
 
   if (err) throw err
 
-  Relay.from('fritzing').type('fz').data(fzXML).build()
+  relay.from('fritzing').type('fz').data(fzXML).build()
     .then((sketch) => {
 
       // work with Sketch data, ie:
