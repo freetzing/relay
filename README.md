@@ -5,7 +5,7 @@
 ## Installation
 
 ```sh
-npm install fz-relay
+yarn add fz-relay
 ```
 
 
